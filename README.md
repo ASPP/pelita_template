@@ -32,6 +32,8 @@ Pelita is a PacMan™ like game. Two teams each of two bots are placed in a maze
 
 - **game over**: the game ends when one team eats all of its enemy's food pellets or after **300** rounds.
 
+- **losing**: if an error is raised by a team during the game, the team will disconnect and it will be an automatic loss.  
+
 - **winning**: the team with the highest score after game over wins the game, regardless of which team finished the food.
 
 ## Your task
