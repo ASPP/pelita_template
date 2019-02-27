@@ -12,3 +12,8 @@ def move(bot, state):
     import pdb; pdb.set_trace()
     next_move = (0,0)
     return next_move, state
+
+if __name__ == '__main__':
+    import pelita
+    layout_name, layout_string = pelita.layout.get_random_layout(filter="small")
+    pelita.libpelita.run_game([move, "demo01_stopping.py"], rounds=30, layout=layout_string)
