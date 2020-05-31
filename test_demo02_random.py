@@ -8,13 +8,13 @@ def test_always_legal_simple_layout():
     layout="""
     ########
     #     .#
-    #.1  EE#
+    #.b  xy#
     ########
     """
     # generate all possible locations within the maze
     all_locations = ((x, y) for x in range(1,7) for y in range(1,3))
     for loc in all_locations:
-        bot = setup_test_game(layout=layout, is_blue=True, bots=[loc])
+        bot = setup_test_game(layout=layout, is_blue=True, bots={'a':loc})
         next_pos = move(bot, {})
         # check that the position is valid
         assert next_pos in bot.legal_positions

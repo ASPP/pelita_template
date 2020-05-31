@@ -5,8 +5,8 @@ def test_kill_enemy():
     # do we kill enemies when possible?
     layout="""
     ########
-    #    1.#
-    #.0E  E#
+    #    b.#
+    #.ax  y#
     ########
     """
     bot = setup_test_game(layout=layout, is_blue=True)
@@ -17,8 +17,8 @@ def test_stop_at_the_border():
     # do we stop at the border when we reach it?
     layout="""
     ########
-    #    1.#
-    #. 0E E#
+    #    b.#
+    #. ax y#
     ########"""
     bot = setup_test_game(layout=layout, is_blue=True)
     next_pos = move(bot, {})
@@ -29,8 +29,8 @@ def test_face_the_enemy():
     # homezone?
     layout="""
     ########
-    #  0 1.#
-    #.  E E#
+    #  a b.#
+    #.  x y#
     ########"""
     bot = setup_test_game(layout=layout, is_blue=True)
     next_pos = move(bot, {})
