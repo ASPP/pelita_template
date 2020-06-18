@@ -6,8 +6,8 @@ def test_legalmoves():
     # we try ten times, to test 10 different random streams
     layout="""
     ########
-    #0######
-    #1. .EE#
+    #a######
+    #b. .xy#
     ########
     """
     for i in range(10):
@@ -19,8 +19,8 @@ def test_kill_enemy():
     # check that we indeed kill an enemy when possible
     layout="""
     ########
-    #E###.##
-    #0.  1E#
+    #x###.##
+    #a.  by#
     ########
     """
     bot = setup_test_game(layout=layout, is_blue=True)
@@ -31,8 +31,8 @@ def test_eat_food():
     # check that we indeed collect food when possible
     layout="""
     ########
-    #E # .##
-    #1.E 0 #
+    #y # .##
+    #b.x a #
     ########
     """
     bot = setup_test_game(layout=layout, is_blue=True)
@@ -44,7 +44,7 @@ def test_no_kamikaze_stop():
     layout="""
     ########
     #  ###.#
-    #1. E0E#
+    #b. xay#
     ########
     """
     bot = setup_test_game(layout=layout, is_blue=True)

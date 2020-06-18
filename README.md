@@ -23,7 +23,9 @@ Introduction
 ============
 ![](pelita_GUI.png)
 
-Pelita is a Pac-Man like game. Two teams each of two bots are placed in a maze with food pellets. The maze is split into two parts, the left one belongs to the team on the left (the blue team), the right one belongs to the team on the right (the red team). When a bot is in its own homezone it is a ghost. A ghost can defend its own food pellets by killing the enemies. When a bot is in its enemy's homezone it is a pac-man and can eat the enemy's food. The game is turn-based: one bot moves, the rules of the game are applied, a new state of the game is generated, the next bot moves. The first bot of the blue team moves first, then the first bot of the red team moves, then the second bot of the blue team, and finally the second bot of the read team. This defines a round. A standard game lasts at most 300 rounds.
+Pelita is a Pac-Man like game. Two teams each of two bots are placed in a maze with food pellets. The blue team, starting on the left of the maze, with bots named `a` and `b`. The red team, starting on the right of the maze, with bots named `x` and `y`.
+
+The maze is split into two parts, the left one belongs to the blue team, the right one belongs to the red team. When a bot is in its own homezone it is a ghost. A ghost can defend its own food pellets by killing the enemies. When a bot is in its enemy's homezone it is a pac-man and can eat the enemy's food. The game is turn-based: one bot moves, the rules of the game are applied, a new state of the game is generated, the next bot moves. The first bot of the blue team, bot `a`, moves first, then the first bot of the red team, bot `x`, moves, then the second bot, `b`, of the blue team, and finally the second bot, `y`, of the read team. This defines a round. A standard game lasts at most 300 rounds.
 
 The rules:
 
@@ -31,7 +33,7 @@ The rules:
 
 - **killing enemies**: when a ghost kills an enemy pac-man, the killed pac-man is immediately reset to its starting position and **5 points** are scored for the ghost's team.
 
-- **enemy position**: bots can know their enemies' exact positions only when the enemies are within a distance of **5** squares. If the enemies are further away than that, the bots have access only to a noisy position (more details [below](#is-noisy)).
+- **noisy enemy positions**: bots can know their enemies' exact positions only when the enemies are within a distance of **5** squares. If the enemies are further away than that, the bots have access only to a noisy position (more details [below](#is-noisy)).
 
 - **timeouts**: each bot has **3** seconds to return a valid move. If it doesn't return in time a random legal move is executed instead and an error is recorded.
 
@@ -121,6 +123,10 @@ $ python -m pytest
 ```
 An example unit test could look like this:
 ```python
+from demo01_stopping import move
+from pelita.utils import setup_test_game
+
+
 def test_stays_there_builtin_random_layout():
     # Using a random builtin layout, verify that the bot stays on its initial position
     bot = setup_test_game(layout=None, is_blue=True)
@@ -146,7 +152,6 @@ $ python
 ```
 
 
-
 ## Layouts
 When you play a game using the command `pelita` without specifying a specific layout with the `--layout` option, one of the built-in layouts will be picked at random. The name of the used layout is seen in the lower right corner of the GUI and it is also print to the terminal:
 ```bash
@@ -159,48 +164,54 @@ When you run your own games or write tests, you may want to play a game on a fix
 
 You may also want to specify very simple layouts to test some basic features of your bot that require you to know exactly where the walls, the enemies and the food are. In this case you can pass to `setup_test_game` a layout string. There are several examples of layout strings in the demo tests. 
 
-Printing a `Bot` instance by inserting `print(bot)` within your `move` function will print the layout string corresponding to the current layout. An example:
+Printing a `Bot` instance by inserting `print(bot)` within your `move` function will print the layout string corresponding to the current layout, together with other usefil information. An example:
 ```
+Basic Attacker Bots (you) vs Basic Defender Bots.
+Playing on blue side. Current turn: 1. Bot: b. Round: 79, score: 11:15. timeouts: 0:0
 ################################
-#. .#.   #  .  ##          .?  #
-#   #     .#..      ..         #
-#   #   ####      ########.  # #
-#   #  .#.  .  ##   #       .  #
-#   ## ##  # . ##. .# ###### # #
-#.# #   #..#        #      # #.#
-#.#.#...# . .    . ##  #       #
-#       #  ## .    . . #...#.#.#
-#.# #      #        #..#   # #.#
-# # ###### #. .## . #  ## ##   #
-#  .       #   ##  .  .#.  #   #
-# #  .########      ####   #   #
-#0  E     ..      ..#.     #   #
-#1  .          ##  .  #   .#. .#
+#     .  .   .      #    #     #
+#  ##### ####  ##.  # .# # ### #
+#     ..       ##   #  # #     #
+#  #    .. # . ###.##  #    . .#
+#  #.. ..  #. .     #. ###### ##
+#. # .    .  .      #  #    b .#
+# ######## # .   .  #        # #
+# #    a   #  .     # ######## #
+#.  .   #  #  .     x     . # .#
+## ###### .#     . .#  ..   #  #
+#. .    #  ##.###   #y..    #  #
+#     # #  #   ##              #
+# ### # #. #  .##  #### #####  #
+#     #    #      .   .  .     #
 ################################
+Bots: {'a': (7, 8), 'x': (20, 9), 'b': (28, 6), 'y': (21, 11)}
+Noisy: {'a': False, 'x': True, 'b': False, 'y': True}
+Food: [(4, 9), (14, 13), (10, 6), (1, 6), (1, 9), (13, 11), (4, 5), (14, 9), (5, 6), (9, 1), (8, 5), (9, 4), (13, 4), (9, 13), (13, 1), (13, 7), (1, 11), (6, 1), (7, 3), (12, 5), (14, 5), (3, 11), (14, 8), (5, 5), (8, 4), (10, 10), (13, 6), (7, 5), (6, 3), (7, 8), (22, 2), (22, 11), (23, 10), (22, 14), (30, 6), (30, 9), (18, 4), (17, 2), (24, 10), (21, 5), (23, 11), (28, 4), (17, 7), (30, 4), (17, 10), (19, 10), (25, 14), (26, 9), (18, 14)]
 ```
 
-The walls are identified by `#`, the food by `.`, your bots are `0` and `1`, the enemies are either `?`  or `E` depending if the enemy positions are noisy or exact (more details [below](#is-noisy)).
+The walls are identified by `#`, the food by `.`, the bots are `a` `b` for the blue team and `x` `y` for the red team. The exact coordinates of all food pellets, the bots and their noisy state are listed. More details about noise [below](#is-noisy).
 
 You can create smaller mazes, which are easier to test with and can be typed directly into the tests. For example a maze `8x4` with our bots in `(1, 1)` and `(1, 2)`, where the enemies are on `(5,2)` and `(6,2)` and food pellets in `(2, 2)` and `(6,1)`, and an additional wall in `(4,1)` will look like this:
 ```python
 layout="""
 ########
-#0  # .#
-#1.  EE#
+#a # . #
+#b.  xy#
 ########
 """
 ```
 In case some objects are overlapping (for example you want to locate an enemy bot over a food pellet) you can pass a partial layout and specify the positions of the objects in a list of coordinates to `setup_test_game`. For example:
 ```python
+from pelita.utils import setup_test_game
 
 def test_print_stuff():
     layout="""
     ########
-    #   #  #
-    #.. ...#
+    #a # . #
+    #b.  xy#
     ########
     """
-    bot = setup_test_game(layout, bots=[(1,1), (1,2)], enemy=[(5,2), (6,2)])
+    bot = setup_test_game(layout=layout, food=[(1,1), (1,2), (5,2), (6,2)])
     print(bot)
 ```
 Save this into a file `test_test.py`. When you run this test with `python -m pytest -s test_test.py` you get:
@@ -208,19 +219,16 @@ Save this into a file `test_test.py`. When you run this test with `python -m pyt
 ...
 
 test_test.py blue (you) vs red.
-Playing on blue side. Current turn: 0. Round: None, score: 0:0. timeouts: 0:0
+Playing on blue side. Current turn: 0. Bot: a. Round: None, score: 0:0. timeouts: 0:0
 ########
-#   #  #
-#.. ...#
+#a # . #
+#b.  xy#
 ########
-########
-#0  #  #
-#1   EE#
-########
+Bots: {'a': (1, 1), 'x': (5, 2), 'b': (1, 2), 'y': (6, 2)}
+Noisy: {'a': False, 'x': False, 'b': False, 'y': False}
+Food: [(1, 1), (1, 2), (2, 2), (6, 2), (5, 1), (5, 2)]
 ...
 ```
-Notice that when there are overlapping object, two or more layouts will be printed. The effective layout is the one obtained by overlapping all of the partial layouts.
-
 Notice that we have to pass the option `-s` to `pytest` so that it shows what we print. By default `pytest` swallows everything that gets printed to standard output and standard error on the terminal. 
 
 ## Full API Description
@@ -308,6 +316,8 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
 
 - **`bot.deaths`** is the number of times your bot has been killed until now.
 
+- **`bot.char** is the character of the bot: `a`, `b`, `x` or `y`. 
+
 - **`bot.enemy`** is a list containing the references to the two enemy bots, which are also `Bot` objects, so they have all the properties we have just seen above. So, for example the position of the first enemy bot:
     ```python
     bot.enemy[0].position
@@ -318,7 +328,7 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
 
 - **`bot.enemy[0].team_name`** you can also inspect the enemy team name with `bot.enemy[0].team_name`.
 
-- **`bot.enemy[0].is_noisy`**  <a id="is-noisy"></a> your bot has a sight-radius of 5 squares. This means that when an enemy bot is located more than 5 squares away from your bot, `bot.enemy[0].position` will not be exact and `bot.enemy[0].is_noisy` will be `True`. The sight-radius for red bot 1 is the red-dotted area in the picture below. Red bot 1 will see the exact position of blue bot 0, because it falls into its sight-radius. Instead, red bot 1 will see blue bot 1 as if it were located in one random legal position up to 5 squares away from its true position (this is the noise-radius, the blue-striped area around blue bot 1 in the picture). An example of using the `is_noisy` property is given in [demo05_basic_defender.py](demo05_basic_defender.py).
+- **`bot.enemy[0].is_noisy`**  <a id="is-noisy"></a> your bot has a sight-radius of 5 squares. This means that when an enemy bot is located more than 5 squares away from your bot, `bot.enemy[0].position` will not be exact and `bot.enemy[0].is_noisy` will be `True`. The sight-radius for red bot `y` is the red area in the picture below. Red bot `y` will see the exact position of blue bot `a`, because it falls into its sight-radius. Instead, red bot `y` will see blue bot `b` as if it were located in one random legal position up to 5 squares away from its true position (this is the noise-radius, the blue area around blue bot `b` in the picture). An example of using the `is_noisy` property is given in [demo05_basic_defender.py](demo05_basic_defender.py).
 
 ![](pelita_GUI_noise.png)
 

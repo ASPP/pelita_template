@@ -6,8 +6,8 @@ def test_nostep():
 
     layout="""
     ########
-    #0 #####
-    #1. .EE#
+    #a #####
+    #b. .xy#
     ########
     """
     # run the test for ten random games

@@ -5,8 +5,8 @@ def test_eat_food():
     # do we eat food when it's available?
     layout="""
     ########
-    #    0.#
-    #.1  EE#
+    #    a.#
+    #.b  xy#
     ########
     """
     bot = setup_test_game(layout=layout, is_blue=True)
@@ -17,8 +17,8 @@ def test_no_kamikaze():
     # do we avoid enemies when they can kill us?
     layout="""
     ########
-    #    E.#
-    #.1  0E#
+    #    x.#
+    #.b  ay#
     ########
     """
     bot = setup_test_game(layout=layout, is_blue=True)
@@ -29,8 +29,8 @@ def test_do_not_step_on_enemy():
     # check that we don't step back on an enemy when we are fleeing
     layout="""
     ########
-    #    E.#
-    #.1 #0E#
+    #    x.#
+    #.b #ay#
     ########
     """
     bot = setup_test_game(layout=layout, is_blue=True)
