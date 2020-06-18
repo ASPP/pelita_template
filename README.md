@@ -191,7 +191,7 @@ Food: [(4, 9), (14, 13), (10, 6), (1, 6), (1, 9), (13, 11), (4, 5), (14, 9), (5,
 
 The walls are identified by `#`, the food by `.`, the bots are `a` `b` for the blue team and `x` `y` for the red team. The exact coordinates of all food pellets, the bots and their noisy state are listed. More details about noise [below](#is-noisy).
 
-You can create smaller mazes, which are easier to test with and can be typed directly into the tests. For example a maze `8x4` with our bots in `(1, 1)` and `(1, 2)`, where the enemies are on `(5,2)` and `(6,2)` and food pellets in `(2, 2)` and `(6,1)`, and an additional wall in `(4,1)` will look like this:
+You can create smaller mazes, which are easier to test with and can be typed directly into the tests. For example a maze `8x4` with the blue bots in `(1, 1)` and `(1, 2)`, where the red bots are on `(5,2)` and `(6,2)` and food pellets in `(2, 2)` and `(6,1)`, and an additional wall in `(4,1)` will look like this:
 ```python
 layout="""
 ########
@@ -200,7 +200,7 @@ layout="""
 ########
 """
 ```
-In case some objects are overlapping (for example you want to locate an enemy bot over a food pellet) you can pass a partial layout and specify the positions of the objects in a list of coordinates to `setup_test_game`. For example:
+In case some objects are overlapping (for example you want to locate a red bot over a food pellet) you can pass a partial layout and specify the positions of the objects in a list of coordinates to `setup_test_game`. For example:
 ```python
 from pelita.utils import setup_test_game
 
@@ -243,9 +243,7 @@ The `move` function gets two input arguments:
 
 - **`bot`** is a reference to the bot in your team corresponding to the current turn. It is an instance of the [`Bot` object](#the-bot-object), which contains all information about the current state of the game
 
-- **`state`** points to a dictionary which can be used to hold state between rounds. It is intially empty when the game starts, and the `move` function can store whatever it wants in it.
-
-Example of usage for `state` can be found in [demo04_basic_attacker.py](demo04_basic_attacker.py), [demo05_basic_defender.py](demo05_basic_defender.py), [demo06_one_and_one.py](demo06_one_and_one.py):
+- **`state`** points to a dictionary which can be used to hold state between rounds. It is intially empty when the game starts, and the `move` function can store whatever it wants in it. Example of usage for `state` can be found in [demo04_basic_attacker.py](demo04_basic_attacker.py), [demo05_basic_defender.py](demo05_basic_defender.py), [demo06_one_and_one.py](demo06_one_and_one.py):
     ```python
     def move(bot, state):
         state['something_to_remember'] = 'an important string'
@@ -260,7 +258,7 @@ Note that the returned value must represent a legal position, i.e. you can not m
 ### The `Bot` object
 Note that the `Bot` object is read-only, i.e. any modifications you make to that object within the `move` function will be discarded at the next round. Use the `state` object for keeping state between rounds.
 
-- **`bot.turn`** is the turn this bot is playing, either `0` or `1`.
+- **`bot.turn`** is the turn this bot is playing, either `0` (for bot `a` and `x`) or `1` (for bot `b` and `y`).
 
 - **`bot.other`** is the other bot in your team. It is a reference to a `Bot` object.
 
@@ -316,7 +314,7 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
 
 - **`bot.deaths`** is the number of times your bot has been killed until now.
 
-- **`bot.char** is the character of the bot: `a`, `b`, `x` or `y`. 
+- **`bot.char`** is the character representing the bot: `a`, `b`, `x` or `y`. 
 
 - **`bot.enemy`** is a list containing the references to the two enemy bots, which are also `Bot` objects, so they have all the properties we have just seen above. So, for example the position of the first enemy bot:
     ```python
