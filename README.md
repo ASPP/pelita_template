@@ -137,7 +137,7 @@ def test_stays_there_builtin_random_layout():
 
 For setting up test games there is a utility function you can import from the `pelita.utils` module:
 
-**`setup_test_game(layout, is_blue=True, round=None, score=None, seed=None, food=None, bots=None, enemy=None, is_noisy=None) ⟶ bot`**
+**`setup_test_game(layout, is_blue=True, round=None, score=None, seed=None, food=None, bots=None, is_noisy=None) ⟶ bot`**
 
 Given a layout, returns a [Bot](#the-bot-object) that you can pass to the [move](#the-move-function) function.
 
