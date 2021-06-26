@@ -78,6 +78,7 @@ for i, game in enumerate(collection):
         defender_wins += result['blue_wins']
         score_difference += result['red_score'] - result['blue_score']
 
+print(f'Games played: {len(collection)}')
 print(f'Attacker wins: {attacker_wins}')
 print(f'Defender wins: {defender_wins}')
 print(f'Draws: {draws}')
