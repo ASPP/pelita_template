@@ -11,6 +11,7 @@ Pelita
   - [Testing](#testing)
     - [Manual testing](#manual-testing)
     - [Unit testing](#unit-testing)
+  - [Layouts](#layouts)
   - [Full API Description](#full-api-description)
     - [The maze](#the-maze)
     - [The `move` function](#the-move-function)
@@ -23,7 +24,7 @@ Introduction
 ============
 ![](pelita_GUI.png)
 
-Pelita is a Pac-Man like game. Two teams each of two bots are placed in a maze with food pellets. The blue team, starting on the left of the maze, with bots named `a` and `b`. The red team, starting on the right of the maze, with bots named `x` and `y`.
+Pelita is a Pac-Man like game. Two teams each of two characters (bots) are placed in a maze with food pellets. The blue team starts on the left of the maze, with bots named `a` and `b`. The red team starts on the right of the maze, with bots named `x` and `y`.
 
 The maze is split into two parts, the left one belongs to the blue team, the right one belongs to the red team. When a bot is in its own homezone it is a ghost. A ghost can defend its own food pellets by killing the enemies. When a bot is in its enemy's homezone it is a pac-man and can eat the enemy's food. The game is turn-based: one bot moves, the rules of the game are applied, a new state of the game is generated, the next bot moves. The first bot of the blue team, bot `a`, moves first, then the first bot of the red team, bot `x`, moves, then the second bot, `b`, of the blue team, and finally the second bot, `y`, of the read team. This defines a round. A standard game lasts at most 300 rounds.
 
@@ -55,10 +56,10 @@ through the maze, kill the enemy's pac-men, and eat the enemy's food. You can fi
 TEAM_NAME = 'StoppingBots'
 
 def move(bot, state):
-    next_pos = bot.position
-    return next_pos
+    # do not move at all
+    return bot.position
 ```
-As seen above, your implementation consists of a team name (the `TEAM_NAME` string) and a function `move`, which given a bot and a state returns the next position for current bot. Don't panic right now, in the [Full API Description](#full-api-description) section you'll find all the details.
+As seen above, your implementation consists of a team name (the `TEAM_NAME` string) and a function `move`, which is given a bot and a state and returns the next position for current bot. Don't panic right now, in the [Full API Description](#full-api-description) section you'll find all the details.
 
 ## Content of this repository
 In this repository you will find several demo implementations (all files named `demoXX_XXX.py`), that you can use as a starting point for your own implementations. The files named  `test_demoXX_XXX.py` are example unit tests for some of the demo bot implementations. You can run the tests within a clone of this repo with `pytest` by typing:
@@ -110,7 +111,7 @@ You can pass several options to the `pelita` command to help you with testing.
 
 - **`--progress`** similar to `--null` but showing the progress of the running game.
 
-- **`--no-timeout`** you can pass the option `--no-timeout` to disable the timeout detection. This is useful for example if you want to run a debugger on your bot, like in [demo08_debugger.py](demo08_debugger.py)
+- **`--no-timeout`** you can pass the option `--no-timeout` to disable the timeout detection. Usually, if a bot takes longer than 3 seconds to respond it is considered an error. Disabling it is useful for example if you want to run a debugger on your bot, like in [demo07_debugger.py](demo07_debugger.py)
 
 - **`--help`** the full list of supported options can be obtained by passing `--help`.
 
@@ -135,11 +136,11 @@ def test_stays_there_builtin_random_layout():
     assert next_pos == bot.position
 ```
 
-For setting up test games there is a utility function you can import from the `pelita.utils` module:
+The test first has to set up a game environment by using the utility function `setup_test_game` imported from the `pelita.utils` module before calling the `move` funtion of the loaded bot.
 
 **`setup_test_game(layout, is_blue=True, round=None, score=None, seed=None, food=None, bots=None, is_noisy=None) ⟶ bot`**
 
-Given a layout, returns a [Bot](#the-bot-object) that you can pass to the [move](#the-move-function) function.
+Given a layout, it returns a [Bot](#the-bot-object) which you can pass to the [move](#the-move-function) function.
 
 The blue team's homezone is always on the left and the red team's homezone is always on the right. In the `setup_test_game` function you can pass `is_blue` which defines which side you are currently playing on.
 
@@ -162,9 +163,9 @@ Using layout 'normal_035'
 
 When you run your own games or write tests, you may want to play a game on a fixed layout. You can do that by specifying the option `--layout normal_035` to the `pelita` command, or passing `layout="normal_035"` to `setup_test_game`.
 
-You may also want to specify very simple layouts to test some basic features of your bot that require you to know exactly where the walls, the enemies and the food are. In this case you can pass to `setup_test_game` a layout string. There are several examples of layout strings in the demo tests. 
+You may also want to specify very simple layouts to test some basic features of your bot that require you to know exactly where the walls, the enemies and the food are. In this case you can pass to `setup_test_game` a layout string. There are several examples of layout strings in the demo tests.
 
-Printing a `Bot` instance by inserting `print(bot)` within your `move` function will print the layout string corresponding to the current layout, together with other usefil information. An example:
+By inserting `print(bot)` within your `move` function, you can print the layout string corresponding to the current layout, together with other useful information. An example:
 ```
 Basic Attacker Bots (you) vs Basic Defender Bots.
 Playing on blue side. Current turn: 1. Bot: b. Round: 79, score: 11:15. timeouts: 0:0
@@ -239,7 +240,7 @@ Notice that we have to pass the option `-s` to `pytest` so that it shows what we
 ## Full API Description
 
 ### The maze
-The maze is a grid. Each square in the grid is defined by its coordinates. The default width of the maze is `32` squares, the default height is `16` squares. The coordinate system has the origin `(0, 0)` in the top left (North-West) of the maze and its maximum value `(31, 15)` in the bottom right (South-East). Each square which is not a wall can be empty or contain a food pellet or one or more bots. The different mazes are called `layouts`. For the tournament all layouts will have the default values for width and height and will have a wall on all squares around the border.
+The maze is a grid. Each square in the grid is defined by its coordinates. The default width of the maze is `32` squares, the default height is `16` squares. The coordinate system has the origin `(0, 0)` in the top left of the maze and its maximum value `(31, 15)` in the bottom right. Each square which is not a wall can be empty or contain a food pellet or one or more bots. The different mazes are called `layouts`. For the tournament all layouts will have the default values for width and height and will have a wall on all squares around the border.
 
 ### The `move` function
 **`move(bot, state) ⟶ (x, y)`**
@@ -248,20 +249,28 @@ The `move` function gets two input arguments:
 
 - **`bot`** is a reference to the bot in your team corresponding to the current turn. It is an instance of the [`Bot` object](#the-bot-object), which contains all information about the current state of the game
 
-- **`state`** points to a dictionary which can be used to hold state between rounds. It is intially empty when the game starts, and the `move` function can store whatever it wants in it. Example of usage for `state` can be found in [demo04_basic_attacker.py](demo04_basic_attacker.py), [demo05_basic_defender.py](demo05_basic_defender.py), [demo06_one_and_one.py](demo06_one_and_one.py):
+- **`state`** is a dictionary which can be used to hold information persistently over rounds. It is empty when the game starts. In the `move` function you can store whatever you want in it. Examples for the usage of the `state` dictionary can be found in [demo04_basic_attacker.py](demo04_basic_attacker.py), [demo05_basic_defender.py](demo05_basic_defender.py), [demo06_switching_bots.py](demo06_switching_bots.py):
     ```python
     def move(bot, state):
         state['something_to_remember'] = 'an important string'
         return bot.position
     ```
-    The `state` object will be passed untouched to the move function at every turn.
+
+    The same `state` dictionary is available to both bots of a team. It will be passed untouched to the move function at every turn. Thus, if your bots want to remember distinct things, it may make sense to create a dictionary key for each bot.
+
+    ```python
+    def move(bot, state):
+        state[bot.turn] = 'i am bot ' + str(bot.turn)
+        return bot.position
+    ```
+
 
 The `move` function returns the position to move the bot to in the current turn. The position is a tuple of two integers `(x, y)`, which are the coordinates on the game grid.
 
 Note that the returned value must represent a legal position, i.e. you can not move your bot onto a wall or outside of the maze. If you return an illegal position, a legal position will be chosen at random instead and an error will be recorded for your team. After 5 errors the game is over and you lose the game.
 
 ### The `Bot` object
-Note that the `Bot` object is read-only, i.e. any modifications you make to that object within the `move` function will be discarded at the next round. Use the `state` object for keeping state between rounds.
+Note that the `Bot` object is read-only, i.e. any modifications you make to that object within the `move` function will be discarded at the next round. Use the `state` dictionary for keeping track of information between rounds.
 
 - **`bot.turn`** is the turn this bot is playing, either `0` (for bot `a` and `x`) or `1` (for bot `b` and `y`).
 
@@ -269,7 +278,7 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
 
 - **`bot.position`** is a tuple of the coordinates your bot is on at the moment. For example `(3, 9)`.
 
-- **`bot.legal_positions`** is a list of positions your bot can take in the current turn without hitting a wall. At each turn the bot can move by one square in the grid, either horizontally or vertically, if the target square is not a wall. Note that the bot can always stay steady, i.e. you can let your `move` function return `bot.position`.
+- **`bot.legal_positions`** is a list of positions your bot can take in the current turn without hitting a wall. At each turn the bot can move by one square in the grid, either horizontally or vertically, if the target square is not a wall. Note that the bot can always stay in the same position, i.e. you can let your `move` function return `bot.position`.
 
 - **`bot.walls`** is a list of the coordinates of the walls in the maze:
     ```python
@@ -279,7 +288,7 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
     ```python
     (3, 9) in bot.walls
     ```
-    
+
     The maze can be represented as a graph. If you want to use [networkx](https://networkx.github.io) for shortest path algorithms, you can use the `walls_to_graph` function in `pelita.utils`.
 
     Examples for using a graph representation for shortest path calculations can be found in [demo04_basic_attacker.py](demo04_basic_attacker.py) and [demo05_basic_defender.py](demo05_basic_defender.py).
@@ -298,10 +307,12 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
     ```python
     [(17, 8), (24, 8), (17, 7), ...]
     ```
-    as soon as the enemy will start eating your food pellets this list will shorten up!
+    as soon as the enemy starts eating your food pellets this list will shorten up!
 
 
-- **`bot.track`** is a list of the coordinates of the positions that the bot has taken until now. It gets reset every time the bot gets killed by an enemy ghost. When you are killed, the property **`bot.was_killed`** is set to `True` until the next round.
+- **`bot.track`** is a list of the coordinates of the positions that the bot has taken until now. It gets reset every time the bot gets killed by an enemy ghost.
+
+- When you are killed, the property **`bot.was_killed`** is set to `True` until the next round.
 
 - **`bot.score`** and **`bot.round`** tell you the score of your team and the round you are playing.
 
@@ -319,7 +330,7 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
 
 - **`bot.deaths`** is the number of times your bot has been killed until now.
 
-- **`bot.char`** is the character representing the bot: `a`, `b`, `x` or `y`. 
+- **`bot.char`** is the character representing the bot: `a`, `b`, `x` or `y`.
 
 - **`bot.enemy`** is a list containing the references to the two enemy bots, which are also `Bot` objects, so they have all the properties we have just seen above. So, for example the position of the first enemy bot:
     ```python
@@ -337,7 +348,7 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
 
 ### Running multiple games in the background
 You may want to run multiple games in the background to gather statistics about your implementation,
-or to fit some parameters of your implementation. The script [demo10_background_games.py](demo10_background_games.py) is an example of this. You can run it like this:
+or to fit some parameters of your implementation. The script [demo10_background_games.py](demo08_background_games.py) is an example of this. You can run it like this:
 ```bash
-python demo10_background_games.py
+python demo08_background_games.py
 ```
