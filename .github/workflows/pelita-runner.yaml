@@ -1,0 +1,64 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Pelita runner
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  detect-team:
+    runs-on: ubuntu-latest
+    outputs:
+      team: ${{ steps.set-group-script.outputs.group }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Detect group script
+      id: set-group-script
+      # some stupid bash string array tricks there: ($( .. ))
+      run: |
+          group=($( ls group{0,1,2,3,4}.py 2> /dev/null ))
+          if [ ${#group[@]} -eq 1 ] ; then
+            echo "::set-output name=group::${group}"
+          else
+            echo "::error::No groupN.py file found."
+            exit 1
+          fi
+
+      shell: bash
+
+  debug-projects-matrix:
+    needs: load-players
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "${{needs.load-players.outputs.teams}}"
+          echo "${{fromJson(needs.load-players.outputs.teams)}}"
+
+  run-pelita:
+    needs: load-players
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.9]
+        players: ${{fromJson(needs.detect-team.outputs.team)}}
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install flake8 pytest
+        python -m pip install pelita
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Check that a the team can be imported
+      run: |
+        pelita --check-team ${{ matrix.players }}
