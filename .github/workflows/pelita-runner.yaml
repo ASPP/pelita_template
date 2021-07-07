@@ -1,0 +1,85 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Pelita CI testing
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  detect-team:
+    runs-on: ubuntu-latest
+    outputs:
+      team: ${{ steps.set-group-script.outputs.group }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Detect group script
+      id: set-group-script
+      # some stupid bash string array tricks there: ($( .. ))
+      run: |
+        group=($(for g in group{0,1,2,3,4}.py ; do [ -f $g ] && echo "$g" || : ; done ))
+        if [ ${#group[@]} -eq 1 ] ; then
+          echo "::set-output name=group::\"${group}\""
+        else
+          echo "::error::No or more than one groupN.py file found."
+          exit 1
+        fi
+      shell: bash
+
+  run-pelita:
+    name: Run pelita with player ${{fromJson(needs.detect-team.outputs.team)}}
+    needs: detect-team
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.9]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install flake8 pytest
+        python -m pip install git+https://github.com/ASPP/pelita
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Check that a the team can be imported
+      run: |
+        pelita --check-team ${{needs.detect-team.outputs.team}}
+
+  pytest:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.9]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install flake8 pytest
+        python -m pip install git+https://github.com/ASPP/pelita
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    - name: Test with pytest
+      run: |
+        python -m pytest
+
