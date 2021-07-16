@@ -16,6 +16,7 @@ NUM_GAMES = 100
 collection = []
 
 for idx in range(NUM_GAMES):
+    print('.', end='', flush=True)
 
     # dictionary to store game parameters
     game = {}

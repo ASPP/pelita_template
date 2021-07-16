@@ -5,6 +5,8 @@ from pelita.utils import setup_test_game
 def test_always_legal_simple_layout():
     # Given a simple layout, verify that the bot always returns a valid position,
     # independent of its initial position.
+    # Note that for this test, we only mention the walls (#), food (.) and bots
+    # b, x and y, but leave out bot a. Bot a will be specified in `setup_test_game`.
     layout="""
     ########
     #     .#
