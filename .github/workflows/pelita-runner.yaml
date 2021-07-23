@@ -11,6 +11,12 @@ on:
 
 jobs:
   detect-team:
+    # The detect-team job specifically looks for a file named
+    # group0.py, group1.py, ..., group4.py
+    # which it will use to search for a team that can be imported.
+    # Outside of an ASPP school (it is a requirement that the main file
+    # in the repo bears that name), this may not be useful and this job
+    # can be skipped.
     runs-on: ubuntu-latest
     outputs:
       team: ${{ steps.set-group-script.outputs.group }}
