@@ -1,0 +1,111 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Pelita CI testing
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  detect-team:
+    # The detect-team job specifically looks for a file named
+    # group0.py, group1.py, ..., group4.py
+    # which it will use to search for a team that can be imported.
+    # Outside of an ASPP school (it is a requirement that the main file
+    # in the repo bears that name), this may not be useful and this job
+    # can be skipped.
+    runs-on: ubuntu-latest
+    outputs:
+      team: ${{ steps.set-group-script.outputs.group }}
+      status: ${{ steps.set-group-script.outputs.status }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Detect group script
+      id: set-group-script
+      # some stupid bash string array tricks there: ($( .. ))
+      run: |
+        group=($(for g in group{0,1,2,3,4}.py ; do [ -f $g ] && echo "$g" || : ; done ))
+        if [ ${#group[@]} -eq 1 ] ; then
+          echo "::set-output name=group::\"${group}\""
+          echo "::set-output name=status::\"Run pelita with player from file ${group}\""
+        else
+          if [ ${#group[@]} -eq 0 ] ; then
+            echo "::error::No groupN.py file found."
+            echo "::set-output name=group::false"
+            echo "::set-output name=status::\"WARNING: No file groupN.py found. Cannot test tournament.\""
+          else
+            echo "::error::More than one groupN.py file found."
+            echo "::set-output name=status::\"Error: More than one groupN.py file found. Cannot test tournament.\""
+            exit 1
+          fi
+        fi
+      shell: bash
+
+  run-pelita:
+    # We don’t want CI to fail, when no groupN.py file has been defined, but we
+    # still want to inform the user about this.  Our appraoch is to set the name
+    # of the run-pelita action from the detect-python.
+    name: ${{ fromJson(needs.detect-team.outputs.status) }}
+    # Ideally, we would skip the rest of the action here with an if: clause,
+    # if: ${{ fromJson(needs.detect-team.outputs.team) }}
+    # but this would mean that the expression in name: doesn’t get evaulated either.
+    # Therefore we skip on every single step below.
+    needs: detect-team
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.9]
+
+    steps:
+    - uses: actions/checkout@v2
+      if: ${{ fromJson(needs.detect-team.outputs.team) }}
+    - name: Set up Python ${{ matrix.python-version }}
+      if: ${{ fromJson(needs.detect-team.outputs.team) }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      if: ${{ fromJson(needs.detect-team.outputs.team) }}
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install flake8 pytest
+        python -m pip install git+https://github.com/ASPP/pelita
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Check that a the team can be imported
+      if: ${{ fromJson(needs.detect-team.outputs.team) }}
+      run: |
+        pelita --check-team ${{needs.detect-team.outputs.team}}
+
+  pytest:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.9]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install flake8 pytest
+        python -m pip install git+https://github.com/ASPP/pelita
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    - name: Test with pytest
+      run: |
+        python -m pytest
+
