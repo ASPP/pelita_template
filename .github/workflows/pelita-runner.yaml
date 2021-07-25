@@ -31,12 +31,13 @@ jobs:
           echo "::set-output name=group::\"${group}\""
         else
           echo "::error::No or more than one groupN.py file found."
-          exit 1
+          echo "::set-output name=group::False"
         fi
       shell: bash
 
   run-pelita:
     name: Run pelita with player ${{fromJson(needs.detect-team.outputs.team)}}
+    if: ${{fromJson(needs.detect-team.outputs.team)}}
     needs: detect-team
     runs-on: ubuntu-latest
     strategy:
