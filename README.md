@@ -44,7 +44,7 @@ The rules:
 
 - **fatal errors**: if a bot raises an Exception, the team is immediately disqualified and the game is over.
 
-- **game over**: the game ends when one team eats all of its enemy's food pellets **or** after **300** rounds **or** if a team is disqualified.
+- **game over**: the game ends when one team eats all of its enemy's food pellets **or** after **300** rounds **or** when a team is disqualified.
 
 - **the winner**: the team with the highest score after game over wins the game, regardless of which team finished the food. A team also wins if the opponent team is disqualified, regardless of the score.
 
@@ -59,10 +59,12 @@ def move(bot, state):
     # do not move at all
     return bot.position
 ```
-As seen above, your implementation consists of a team name (the `TEAM_NAME` string) and a function `move`, which is given a bot and a state and returns the next position for current bot. Don't panic right now, in the [Full API Description](#full-api-description) section you'll find all the details.
+As seen above, your implementation consists of a team name (the `TEAM_NAME` string) and a function `move`, which takes a `bot` object  (which contains all the data that you need to make your decision) and a `state` dict (which you are supposed to fill) and returns the next position for current bot. Don't panic right now, in the [Full API Description](#full-api-description) section you'll find all the details.
 
 ## Content of this repository
-In this repository you will find several demo implementations (all files named `demoXX_XXX.py`), that you can use as a starting point for your own implementations. The files named  `test_demoXX_XXX.py` are example unit tests for some of the demo bot implementations. You can run the tests within a clone of this repo with `pytest` by typing:
+In this repository you will find several demo implementations (all files named `demoXX_XXX.py`), that you can use as a starting point for your own implementations. The demos build upon each other, so it will be useful to follow them in order.
+
+The files named  `test_demoXX_XXX.py` are example unit tests for some of the demo bot implementations. You can run the tests within a clone of this repo with `pytest` by typing:
 ```bash
 $ python -m pytest
 ```
@@ -80,6 +82,31 @@ In the `notebooks` folder you can find some examples of other ways of interactin
     ```
 More info about the command `pelita` [below](#manual-testing)
 
+## The graphical interface
+
+![](pelita_GUI_grid_selection.png)
+
+Pelita’s graphical interface contains a few tools that can help with debugging. For example, using the ‘slower’ and ‘faster’ buttons, one may change the maximum speed of the game. (Of course, it is not possible to speed up slow bots using this.)
+
+When the game has been paused, the ‘step’ and ‘round’ buttons will execute a single step or play a complete round.
+
+The ‘debug’ button will show the grid, which is useful to count the exact distances between two spots as well as the line of sight around the current bot. Additionally, it will show ‘ghost bots’, which denote the positions where the current (ie. the bot that has just moved) saw the noised enemies.
+
+Additionally, selecting a specific square in the grid will show its coordinates and if the square is a wall or contains food or bots are sitting on it:
+
+### Key bindings
+
+There are shortcuts available to all the buttons:
+
+    q               Quit
+    #               Enable grid + debug mode
+    >               Increase speed
+    <               Decrease speed
+    [Space]         Play/pause
+    [Enter]         Play a single step (when in pause mode)
+    [Shift+Enter]   Play one round (when in pause mode)
+
+
 ## Testing
 There are several strategies to test your bot implementations.
 
@@ -92,7 +119,7 @@ You can pass several options to the `pelita` command to help you with testing.
     ```bash
     $ pelita demo03_smartrandom.py demo02_random.py
     Replay this game with --seed 7487886765553999309
-    Using layout 'nomral_018'
+    Using layout 'normal_018'
     ᗧ blue team 'demo03_smartrandom.py' -> 'SmartRandomBots'
     ᗧ red team 'demo02_random.py' -> 'RandomBots'
     ...
@@ -104,9 +131,6 @@ You can pass several options to the `pelita` command to help you with testing.
     ```
 
 - **`--stop-at ROUND`** you can pass the `--stop-at` option to the `pelita` command to stop a game at a specific round. You can then, for example, show the grid, play the next turns step by step, etc.
-
-- selecting a specific square in the grid will show its coordinates and if the square is a wall or contains food or bots are sitting on it:
-    ![](pelita_GUI_grid_selection.png)
 
 - **`--null`** you can pass the option `--null` to the `pelita` command to suppress the graphical interface and just let the game play in the background. This is useful if you want to play many games and just look at their outcome, for example to gather statistics. (A better strategy to play games in the background is shown in [demo10_background_games.py](demo10_background_games.py)).
 
@@ -238,7 +262,7 @@ Noisy: {'a': False, 'x': False, 'b': False, 'y': False}
 Food: [(1, 1), (1, 2), (2, 2), (6, 2), (5, 1), (5, 2)]
 ...
 ```
-Notice that we have to pass the option `-s` to `pytest` so that it shows what we print. By default `pytest` swallows everything that gets printed to standard output and standard error on the terminal. 
+Notice that we have to pass the option `-s` to `pytest` so that it shows what we print. By default `pytest` swallows everything that gets printed to standard output and standard error on the terminal.
 
 ## Full API Description
 
@@ -270,7 +294,7 @@ The `move` function gets two input arguments:
 
 The `move` function returns the position to move the bot to in the current turn. The position is a tuple of two integers `(x, y)`, which are the coordinates on the game grid.
 
-Note that the returned value must represent a legal position, i.e. you can not move your bot onto a wall or outside of the maze. If you return an illegal position, a legal position will be chosen at random instead and an error will be recorded for your team. After 5 errors the game is over and you lose the game.
+Note that the returned value must represent a legal position, i.e. it must be an adjacent position and you can not move your bot onto a wall or outside of the maze. If you return an illegal position, a legal position will be chosen at random instead and an error will be recorded for your team. After 5 errors the game is over and you lose the game.
 
 ### The `Bot` object
 Note that the `Bot` object is read-only, i.e. any modifications you make to that object within the `move` function will be discarded at the next round. Use the `state` dictionary for keeping track of information between rounds.
@@ -283,9 +307,9 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
 
 - **`bot.legal_positions`** is a list of positions your bot can take in the current turn without hitting a wall. At each turn the bot can move by one square in the grid, either horizontally or vertically, if the target square is not a wall. Note that the bot can always stay in the same position, i.e. you can let your `move` function return `bot.position`.
 
-- **`bot.walls`** is a list of the coordinates of the walls in the maze:
+- **`bot.walls`** is a set of the coordinates of the walls in the maze:
     ```python
-    [(0, 0), (1, 0), (2, 0), ..., (29, 15), (30, 15), (31, 15)]
+    {(0, 0), (1, 0), (2, 0), ..., (29, 15), (30, 15), (31, 15)}
     ```
     so, if for example you want to test if position `(3, 9)` in the maze is a wall, you can do:
     ```python
@@ -296,9 +320,9 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
 
     Examples for using a graph representation for shortest path calculations can be found in [demo04_basic_attacker.py](demo04_basic_attacker.py) and [demo05_basic_defender.py](demo05_basic_defender.py).
 
-- **`bot.homezone`** is a list of all the coordinates of your side of the maze, so if for example you are the red team in a `32×16` maze, your homezone will be:
+- **`bot.homezone`** is a set of all the coordinates of your side of the maze, so if for example you are the red team in a `32×16` maze, your homezone will be:
     ```python
-    [(16, 0), (16, 1), (16, 2), (16, 3), ..., (31, 13), (31, 14), (31, 15)]
+    {(16, 0), (16, 1), (16, 2), (16, 3), ..., (31, 13), (31, 14), (31, 15)}
     ```
     as with `bot.walls` you can test if position `(3, 9)` is in your homezone with
     ```python
@@ -325,7 +349,7 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
     ```
     Note that you want to do it only **once** per game!
 
-- **`bot.error_count`** is a count of the error your team has got. Remember that if you commit 5 errors you lose the game, independent of the score. Errors are either timeouts (it takes longer than 3 seconds to execute your `move` function) or illegal positions returned by your `move` function.
+- **`bot.error_count`** is a count of the errors your team has collected. Remember that if you commit 5 errors you lose the game, independent of the score. Errors are either timeouts (it takes longer than 3 seconds to execute your `move` function) or illegal positions returned by your `move` function.
 
 - **`bot.say(text)`** allows you to print `text` as a sort of speech bubble attached to your bot in the graphical user interface.
 
