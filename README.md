@@ -96,7 +96,7 @@ Additionally, selecting a specific square in the grid will show its coordinates 
 
 ### Key bindings
 
-There are shortcuts available to all the buttons:
+There are shortcuts if you don’t like using the mouse:
 
     q               Quit
     #               Enable grid + debug mode
