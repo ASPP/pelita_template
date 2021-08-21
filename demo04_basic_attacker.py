@@ -17,8 +17,6 @@ def init_attack_state():
         }
 
 def move(bot, state):
-    enemy = bot.enemy
-
     # The state dictionary is initially empty
     if state == {}:
         # Initialize the state dictionary.
@@ -29,6 +27,9 @@ def move(bot, state):
         # Initialize a graph representation of the maze.
         # This can be shared among our bots.
         state['graph'] = walls_to_graph(bot.walls)
+
+    # define a few variables for less typing
+    enemy = bot.enemy
 
     target = state[bot.turn]["attack_target"]
     path = state[bot.turn]["attack_path"]

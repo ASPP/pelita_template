@@ -29,14 +29,18 @@ def init_state(personality):
     }
 
 def move(bot, state):
-    # Keep two "substates" — one for each bot
+    # Our state consists of two “substates”, one for each bot.
+    # In order for the substates to work properly with the imported
+    # `move_attacker` and `move_defender` funcions, we need to be sure
+    # that the relevant attributes in the state are properly prefixed
+    # (and each of the functions only works with “their” prefixed version).
+
     if state == {}:
         # here each bot has its own state dictionary (0 and 1) and they share
         # the same game state information in the "graph"
         state['graph'] = walls_to_graph(bot.walls)
         state[0] = init_state("attacker")
         state[1] = init_state("defender")
-
 
     # Only the attacker can go into the enemy zone and be killed. Therefore
     # we only need to switch roles from the perspective of the defender.

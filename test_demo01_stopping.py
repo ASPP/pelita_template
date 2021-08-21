@@ -4,6 +4,8 @@ from pelita.utils import setup_test_game
 def test_stays_there_simple_layout():
     # Given a simple layout, verify that the bot does not move, independent
     # of its initial position.
+    # Note that for this test, we only mention the walls (#), food (.) and bots
+    # b, x and y, but leave out bot a. Bot a will be specified in `setup_test_game`.
     layout="""
     ########
     #     .#
