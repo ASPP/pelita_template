@@ -10,7 +10,6 @@ Pelita
   - [Running a game](#running-a-game)
   - [The graphical interface](#the-graphical-interface)
     - [Key bindings](#key-bindings)
-- [Enable grid + debug mode](#enable-grid--debug-mode)
   - [Testing](#testing)
     - [Manual testing](#manual-testing)
     - [Unit testing](#unit-testing)
