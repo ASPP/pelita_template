@@ -289,7 +289,7 @@ The `move` function gets two input arguments:
 
     ```python
     def move(bot, state):
-        state[bot.turn] = 'i am bot ' + str(bot.turn)
+        state[bot.turn] = f'i am bot {bot.turn}'
         return bot.position
     ```
 
