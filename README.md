@@ -379,7 +379,7 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
 
 ### Running multiple games in the background
 You may want to run multiple games in the background to gather statistics about your implementation,
-or to fit some parameters of your implementation. The script [demo10_background_games.py](demo08_background_games.py) is an example of this. You can run it like this:
+or to fit some parameters of your implementation. The script [demo08_background_games.py](demo08_background_games.py) is an example of this. You can run it like this:
 ```bash
 python demo08_background_games.py
 ```
