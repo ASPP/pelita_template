@@ -373,7 +373,7 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
 
 - **`bot.enemy[0].team_name`** you can also inspect the enemy team name with `bot.enemy[0].team_name`.
 
-- **`bot.enemy[0].is_noisy`**  <a id="is-noisy"></a> your bot has a sight-radius of 5 squares. This means that when an enemy bot is located more than 5 squares away from your bot, `bot.enemy[0].position` will not be exact and `bot.enemy[0].is_noisy` will be `True`. The sight-radius for red bot `y` is the red area in the picture below. Red bot `y` will see the exact position of blue bot `a`, because it falls into its sight-radius. Instead, red bot `y` will see blue bot `b` as if it were located in one random legal position up to 5 squares away from its true position (this is the noise-radius, the blue area around blue bot `b` in the picture). An example of using the `is_noisy` property is given in [demo05_basic_defender.py](demo05_basic_defender.py).
+- **`bot.enemy[0].is_noisy`**  <a id="is-noisy"></a> your bot has a sight-radius of 5 squares. This means that when an enemy bot is located more than 5 squares away from your bot, `bot.enemy[0].position` will not be exact and `bot.enemy[0].is_noisy` will be `True`. The sight-radius for red bot `y` is the red area in the picture below. Red bot `y` will see the exact position of blue bot `a`, because it falls into its sight-radius. Instead, red bot `y` will see blue bot `b` as if it were located in one random legal position up to 5 squares away from its true position. An example of using the `is_noisy` property is given in [demo05_basic_defender.py](demo05_basic_defender.py).
 
 ![](pelita_GUI_noise.png)
 
