@@ -4,8 +4,6 @@
 #
 # - Run 100 games in the background to gather statistics
 # - We'll use a team of basic defenders against a team of basic attackers
-import random
-
 from pelita.utils import run_background_game
 
 from demo05_basic_defender import move as move_defender
@@ -38,7 +36,7 @@ for idx in range(NUM_GAMES):
     # add to our collection of games
     collection.append(game)
 
-# At the end we can picke the results to be analyzed later:
+# At the end we can pickle the results to be analyzed later:
 #import pickle
 #with open('results.pic', 'wb') as fh:
 #    pickle.dump(collection, fh)
