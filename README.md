@@ -309,9 +309,9 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
 
 - **`bot.legal_positions`** is a list of positions your bot can take in the current turn without hitting a wall. At each turn the bot can move by one square in the grid, either horizontally or vertically, if the target square is not a wall. Note that the bot can always stay in the same position, i.e. you can let your `move` function return `bot.position`.
 
-- **`bot.walls`** is a set of the coordinates of the walls in the maze:
+- **`bot.walls`** is a tuple of the coordinates of the walls in the maze:
     ```python
-    {(0, 0), (1, 0), (2, 0), ..., (29, 15), (30, 15), (31, 15)}
+    ((0, 0), (1, 0), (2, 0), ..., (29, 15), (30, 15), (31, 15))
     ```
     so, if for example you want to test if position `(3, 9)` in the maze is a wall, you can do:
     ```python
@@ -324,9 +324,9 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
     
 - **`bot.shape`** is a tuple with the size of the maze. The ususal maze size will be `32x16`, that is `(32, 16)`, unless other layouts are specified.
 
-- **`bot.homezone`** is a set of all the coordinates of your side of the maze, so if for example you are the red team in a `32×16` maze, your homezone will be:
+- **`bot.homezone`** is a tuple of all the coordinates of your side of the maze that are not a wall. If for example you are the red team in a `32×16` maze, your homezone might be:
     ```python
-    {(16, 0), (16, 1), (16, 2), (16, 3), ..., (31, 13), (31, 14), (31, 15)}
+    ((16, 1), (16, 2), (16, 3), ..., (30, 11), (30, 13), (30, 14))
     ```
     as with `bot.walls` you can test if position `(3, 9)` is in your homezone with
     ```python
