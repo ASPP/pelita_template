@@ -1,6 +1,6 @@
 # Run this script with
 #
-# python3 demo10_background_games.py
+# python3 demo08_background_games.py
 #
 # - Run 100 games in the background to gather statistics
 # - We'll use a team of basic defenders against a team of basic attackers
