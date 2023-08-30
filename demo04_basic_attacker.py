@@ -3,12 +3,13 @@
 # It tries on the way to avoid being killed by the enemy: if the next move
 # to get to the food would put it on a ghost, then it chooses a random safe
 # position
-TEAM_NAME = 'Basic Attacker Bots'
-
 
 import networkx
 
 from pelita.utils import walls_to_graph
+
+
+TEAM_NAME = 'Basic Attacker Bots'
 
 def init_attack_state():
     return {

@@ -4,15 +4,13 @@
 # strategy. Once the attacking bot is killed, it restarts as a defender, while
 # the previous defender changes its personality and becomes the new attacker.
 
-
-TEAM_NAME = 'Switching Bots'
-
-import networkx
-
 from pelita.utils import walls_to_graph
 
 from demo05_basic_defender import move as move_defender
 from demo04_basic_attacker import move as move_attacker
+
+
+TEAM_NAME = 'Switching Bots'
 
 def init_state(personality):
     return {

@@ -5,12 +5,12 @@
 # As soon as an enemy bot is not noisy anymore, i.e. it has come near, the
 # bot goes after it and leaves the other enemy alone
 
-TEAM_NAME = 'Basic Defender Bots'
-
-
 import networkx
 
 from pelita.utils import walls_to_graph
+
+
+TEAM_NAME = 'Basic Defender Bots'
 
 def init_defend_state():
     return {

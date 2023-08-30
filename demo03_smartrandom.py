@@ -3,6 +3,7 @@
 # - it eats food in the vicinity
 # - does not do kamikaze
 # - avoids going back to positions it has seen already
+
 TEAM_NAME = 'SmartRandomBots'
 
 def move(bot, state):
