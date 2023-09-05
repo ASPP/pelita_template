@@ -12,7 +12,7 @@ on:
 jobs:
   detect-team:
     # The detect-team job specifically looks for a file named
-    # group0.py, group1.py, ..., group4.py
+    # [gG]roup0.py, [gG]roup1.py, ..., [gG]roup4.py
     # which it will use to search for a team that can be imported.
     # Outside of an ASPP school (it is a requirement that the main file
     # in the repo bears that name), this may not be useful and this job
@@ -27,7 +27,7 @@ jobs:
       id: set-group-script
       # some stupid bash string array tricks there: ($( .. ))
       run: |
-        group=($(for g in group{0,1,2,3,4}.py ; do [ -f $g ] && echo "$g" || : ; done ))
+        group=($(for g in {g,G}roup{0,1,2,3,4}.py ; do [ -f $g ] && echo "$g" || : ; done ))
         if [ ${#group[@]} -eq 1 ] ; then
           echo "::set-output name=group::\"${group}\""
           echo "::set-output name=status::\"Run pelita with player from file ${group}\""
