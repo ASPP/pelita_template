@@ -7,8 +7,6 @@
 
 import networkx
 
-from pelita.utils import walls_to_graph
-
 
 TEAM_NAME = 'Basic Defender Bots'
 
@@ -20,8 +18,6 @@ def init_defend_state():
 
 def move(bot, state):
     if state == {}:
-        # store the graph representation of the maze in the state object
-        state['graph'] = walls_to_graph(bot.walls)
         state[0] = init_defend_state()
         state[1] = init_defend_state()
 
@@ -39,7 +35,7 @@ def move(bot, state):
         raise Exception('We should never be here!')
 
     # get the next position along the shortest path to our target enemy bot
-    next_pos = networkx.shortest_path(state['graph'], bot.position, target)[1]
+    next_pos = networkx.shortest_path(bot.graph, bot.position, target)[1]
     # we save the current target in our state dictionary
     state[bot.turn]["defend_target"] = target
 

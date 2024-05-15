@@ -6,9 +6,6 @@
 
 import networkx
 
-from pelita.utils import walls_to_graph
-
-
 TEAM_NAME = 'Basic Attacker Bots'
 
 def init_attack_state():
@@ -25,9 +22,6 @@ def move(bot, state):
         # food targets.
         state[0] = init_attack_state()
         state[1] = init_attack_state()
-        # Initialize a graph representation of the maze.
-        # This can be shared among our bots.
-        state['graph'] = walls_to_graph(bot.walls)
 
     # define a few variables for less typing
     enemy = bot.enemy
@@ -42,7 +36,7 @@ def move(bot, state):
         target = bot.random.choice(enemy[0].food)
         # use networkx to get the shortest path from here to the target
         # we do not use the first position, which is always equal to bot_position
-        path = networkx.shortest_path(state['graph'], bot.position, target)[1:]
+        path = networkx.shortest_path(bot.graph, bot.position, target)[1:]
         state[bot.turn]["attack_path"] = path
         state[bot.turn]["attack_target"] = target
 

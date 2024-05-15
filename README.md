@@ -318,11 +318,13 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
     (3, 9) in bot.walls
     ```
 
-    The maze can be represented as a graph. If you want to use [networkx](https://networkx.github.io) for shortest path algorithms, you can use the `walls_to_graph` function in `pelita.utils`.
+    The maze is also represented as a graph in the attribute `bot.graph`.
 
-    Examples for using a graph representation for shortest path calculations can be found in [demo04_basic_attacker.py](demo04_basic_attacker.py) and [demo05_basic_defender.py](demo05_basic_defender.py).
-    
-- **`bot.shape`** is a tuple with the size of the maze. The ususal maze size will be `32x16`, that is `(32, 16)`, unless other layouts are specified.
+- **`bot.graph`** is a representation of the maze as a graph. The graph represents the free squares in the maze –i.e. all the non-wall coordinates– and their connections. The `bot.graph` object is an instance of the [`Graph`](https://networkx.org/documentation/stable/reference/classes/graph.html) class from the  [networkx](https://networkx.github.io) library.
+
+    Examples for using a graph representation for shortest path calculations using the [networkx](https://networkx.github.io) library can be found in [demo04_basic_attacker.py](demo04_basic_attacker.py) and [demo05_basic_defender.py](demo05_basic_defender.py).
+ 
+- **`bot.shape`** is a tuple with the size of the maze. The usual maze size will be `32x16`, that is `(32, 16)`, unless other layouts are specified.
 
 - **`bot.homezone`** is a tuple of all the coordinates of your side of the maze that are not a wall. If for example you are the red team in a `32×16` maze, your homezone might be:
     ```python
