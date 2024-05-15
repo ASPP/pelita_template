@@ -12,11 +12,14 @@ def move(bot, state):
     enemy_pos = (enemy[0].position, enemy[1].position)
 
     # sensible positions are all legal positions that do not cause death
-    sensible_positions = bot.legal_positions[:]
-    # if we would step on a ghost outside our homezone we discard this move
+    sensible_positions = []
+    # loop throuh all legal_positions for this bot
     for next_pos in bot.legal_positions:
+        # each legal position is good unless we step on a ghost outside our homezone
         if (next_pos in enemy_pos) and (next_pos not in bot.homezone):
-            sensible_positions.remove(next_pos)
+            continue
+        else:
+            sensible_positions.append(next_pos)
 
     if len(sensible_positions) == 0:
         # we can't go anywhere safe
