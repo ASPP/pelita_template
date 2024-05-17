@@ -4,8 +4,6 @@
 # strategy. Once the attacking bot is killed, it restarts as a defender, while
 # the previous defender changes its personality and becomes the new attacker.
 
-from pelita.utils import walls_to_graph
-
 from demo05_basic_defender import move as move_defender
 from demo04_basic_attacker import move as move_attacker
 
@@ -34,9 +32,7 @@ def move(bot, state):
     # (and each of the functions only works with “their” prefixed version).
 
     if state == {}:
-        # here each bot has its own state dictionary (0 and 1) and they share
-        # the same game state information in the "graph"
-        state['graph'] = walls_to_graph(bot.walls)
+        # here each bot has its own state dictionary (0 and 1)
         state[0] = init_state("attacker")
         state[1] = init_state("defender")
 
