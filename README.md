@@ -365,6 +365,8 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
 
 - **`bot.char`** is the character representing the bot: `a`, `b`, `x` or `y`.
 
+- **`bot.team_time`** is the total accumulated time that your team has needed so far. This corresponds to the time shown in the graphical interface. Please note that the time does not increase during the execution of your bot’s code; it is only updated once at the beginning of a step.
+
 - **`bot.enemy`** is a list containing the references to the two enemy bots, which are also `Bot` objects, so they have all the properties we have just seen above. So, for example the position of the first enemy bot:
     ```python
     bot.enemy[0].position
@@ -374,6 +376,8 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
 - **`bot.enemy[0].food`** is the list of coordinates of the food pellets you want to eat.
 
 - **`bot.enemy[0].team_name`** you can also inspect the enemy team name with `bot.enemy[0].team_name`.
+-
+- **`bot.enemy[0].team_time`** you can also inspect the accumulated time that the enemy has used so far.
 
 - **`bot.enemy[0].is_noisy`**  <a id="is-noisy"></a> your bot has a sight-radius of 5 squares. This means that when an enemy bot is located more than 5 squares away from your bot, `bot.enemy[0].position` will not be exact and `bot.enemy[0].is_noisy` will be `True`. The sight-radius for red bot `y` is the red area in the picture below. Red bot `y` will see the exact position of blue bot `a`, because it falls into its sight-radius. Instead, red bot `y` will see blue bot `b` as if it were located in one random legal position up to 5 squares away from its true position. An example of using the `is_noisy` property is given in [demo05_basic_defender.py](demo05_basic_defender.py).
 
