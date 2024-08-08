@@ -9,7 +9,7 @@ Pelita
   - [Content of this repository](#content-of-this-repository)
   - [Running a game](#running-a-game)
   - [The graphical interface](#the-graphical-interface)
-    - [Key bindings](#key-bindings)
+    - [Keyboard shortcuts](#keyboard-shortcuts)
   - [Testing](#testing)
     - [Manual testing](#manual-testing)
     - [Unit testing](#unit-testing)
@@ -19,6 +19,7 @@ Pelita
     - [The `move` function](#the-move-function)
     - [The `Bot` object](#the-bot-object)
     - [Running multiple games in the background](#running-multiple-games-in-the-background)
+  - [Debug using the GUI](#debug-using-the-gui)
 
 ------------------------------------------------
 
@@ -37,6 +38,8 @@ The rules:
 - **killing enemies**: when a ghost kills an enemy pac-man, the killed pac-man is immediately reset to its starting position and **5 points** are scored for the ghost's team.
 
 - **noisy enemy positions**: bots can know their enemies' exact positions only when the enemies are within a distance of **5** squares. If the enemies are further away than that, the bots have access only to a noisy position (more details [below](#is-noisy)).
+
+- **food relocation**: a ghost casts a shadow of **3** squares around itself. Food pellets that stay in the shadow of a ghost for more than 15 rounds without interruption are moved to a different location at random (more details [below](#shaded-food)).
 
 - **timeouts**: each bot has **3** seconds to return a valid move. If it doesn't return in time a random legal move is executed instead and an error is recorded.
 
@@ -86,22 +89,19 @@ More info about the command `pelita` [below](#manual-testing)
 
 ## The graphical interface
 
-![](pelita_GUI_grid_selection.png)
+![](pelita_GUI.png)
 
 Pelita’s graphical interface contains a few tools that can help with debugging. For example, using the ‘slower’ and ‘faster’ buttons, one may change the maximum speed of the game. (Of course, it is not possible to speed up slow bots using this.)
 
-When the game has been paused, the ‘step’ and ‘round’ buttons will execute a single step or play a complete round.
+When the game has been paused, the `step` and `round` buttons will execute a single step or play a complete round. Additionally, selecting a specific square in the grid will show its coordinates and if the square is a wall or contains food or bots are sitting on it.
 
-The ‘debug’ button will show the grid, which is useful to count the exact distances between two spots as well as the line of sight around the current bot. Additionally, it will show ‘ghost bots’, which denote the positions where the current (ie. the bot that has just moved) saw the noised enemies.
+The `debug` button activates the [debug mode](#debug-using-the-gui).
 
-Additionally, selecting a specific square in the grid will show its coordinates and if the square is a wall or contains food or bots are sitting on it:
-
-### Key bindings
-
-There are shortcuts if you don’t like using the mouse:
+### Keyboard shortcuts
 
     q               Quit
-    #               Enable grid + debug mode
+    f               Toggle fullscreen
+    #               Toggle debug mode
     >               Increase speed
     <               Decrease speed
     [Space]         Play/pause
@@ -342,6 +342,7 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
     ```
     as soon as the enemy starts eating your food pellets this list will shorten up!
 
+- **`bot.shaded_food`** <a id="shaded-food"></a> a list of the food pellets currently in the shadow of one or both of the team's bots. When a bot is in its homezone it casts a shadow of **3** squares. Food pellets that happen to be in the shadow for **15** rounds without interruption will get relocated at the next turn. When a food pellet turns grey in the GUI it indicates that there are only 3 rounds left before being relocated. The new position of the pellets is chosen randomly within the free squares of the bot homezone, but outside of the bot's shadow and not on top of another bot. Note that **`bot.enemy[0].shaded_food`** is always empty: you cannot see which food pellets are in the shadow of the enemy.
 
 - **`bot.track`** is a list of the coordinates of the positions that the bot has taken until now. It gets reset every time the bot gets killed by an enemy ghost.
 
@@ -381,11 +382,21 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
 
 - **`bot.enemy[0].is_noisy`**  <a id="is-noisy"></a> your bot has a sight-radius of 5 squares. This means that when an enemy bot is located more than 5 squares away from your bot, `bot.enemy[0].position` will not be exact and `bot.enemy[0].is_noisy` will be `True`. The sight-radius for red bot `y` is the red area in the picture below. Red bot `y` will see the exact position of blue bot `a`, because it falls into its sight-radius. Instead, red bot `y` will see blue bot `b` as if it were located in one random legal position up to 5 squares away from its true position. An example of using the `is_noisy` property is given in [demo05_basic_defender.py](demo05_basic_defender.py).
 
-![](pelita_GUI_noise.png)
-
 ### Running multiple games in the background
 You may want to run multiple games in the background to gather statistics about your implementation,
 or to fit some parameters of your implementation. The script [demo08_background_games.py](demo08_background_games.py) is an example of this. You can run it like this:
 ```bash
 python demo08_background_games.py
 ```
+
+## Debug using the GUI
+When you push the `debug` button in the GUI you'll see a lot more info. You can see:
+
+- the grid  of squares in the maze
+- the move that the current bot has just made is denoted by an highlighted square with an arrow
+- the "sight radius" of the current bot, i.e. the squares around the current bot where the position of the enemy is known exactly
+- the "shadow" of the current bot, i.e. the squares defining the "food" shadow of the current bot: the food pellets in the shadow will turn grey 3 rounds before they getting relocated 
+- if the enemy positions are noisy, you will see the silhouette of the enemy at `bot.enemy[X].position` in addition to the real position, which you have no access to from your code
+
+![](pelita_GUI_debug.png)
+
