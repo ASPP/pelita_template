@@ -30,7 +30,11 @@ def move(bot, state):
     path = state[bot.turn]["attack_path"]
 
     # choose a target food pellet if we still don't have one or
-    # if the old target has been already eaten
+    # if the old target is not there anymore. This can happen for
+    # two different reasons:
+    #   - the old target has been eaten in the last turn
+    #   - the old target has been relocated because of the oppenent's defender
+    #     sitting near it for too long
     if (target is None) or (target not in enemy[0].food):
         # position of the target food pellet
         target = bot.random.choice(enemy[0].food)
