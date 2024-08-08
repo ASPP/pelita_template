@@ -394,5 +394,5 @@ When you push the `debug` button in the GUI you'll see a lot more info. You can 
 - the "shadow" of the current bot, i.e. the squares defining the "food" shadow of the current bot: the food pellets in the shadow will turn grey 3 rounds before they getting relocated 
 - if the enemy positions are noisy, you will see the silhouette of the enemy at `bot.enemy[X].position` in addition to the real position, which you have no access to from your code
 
-![](pelita_GUI_noise.png)
+![](pelita_GUI_debug.png)
 
