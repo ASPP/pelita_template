@@ -165,7 +165,7 @@ def test_stays_there_builtin_random_layout():
     assert next_pos == bot.position
 ```
 
-The test first has to set up a game environment by using the utility function `setup_test_game` imported from the `pelita.utils` module before calling the `move` funtion of the loaded bot.
+The test first has to set up a game environment by using the utility function `setup_test_game` imported from the `pelita.utils` module before calling the `move` function of the loaded bot.
 
 **`setup_test_game(layout, is_blue=True, round=None, score=None, seed=None, food=None, bots=None, is_noisy=None) ⟶ bot`**
 
