@@ -20,9 +20,28 @@ def test_stays_there_simple_layout():
         # check that we did not move
         assert next_pos == bot.position
 
+fixed_layout = """
+################################
+#   . .       .   #.   #    ..y#
+# .       . #     #     . #   x#
+#  ..     #         #### ##  . #
+# .### #### ##### #   # .      #
+#    ...# .    ## #   .        #
+#    .  # .  # ## #########.####
+#.    . # ####    .  . .  . . .#
+#. . .  . .  .    #### # .    .#
+####.######### ## #  . #  .    #
+#        .   # ##    . #...    #
+#      . #   # ##### #### ###. #
+# .  ## ####         #     ..  #
+#a   # .     #     # .       . #
+#b..    #   .#   .       . .   #
+################################
+"""
+
 def test_stays_there_builtin_fixed_layout():
     # Using a fixed builtin layout, verify that the bot stays on its initial position
-    bot = setup_test_game(layout='normal_050', is_blue=True)
+    bot = setup_test_game(layout=fixed_layout, is_blue=True)
     next_pos = move(bot, {})
     # check that we did not move
     assert next_pos == bot.position

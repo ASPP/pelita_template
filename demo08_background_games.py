@@ -30,7 +30,7 @@ for idx in range(NUM_GAMES):
         red = move_defender
         game['blue'] = 'attacker'
 
-    # play each time on a different layout
+    # play each time on a different maze
     result = run_background_game(blue_move=blue, red_move=red)
     game['result'] = result
 
