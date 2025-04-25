@@ -121,7 +121,6 @@ You can pass several options to the `pelita` command to help you with testing.
     ```bash
     $ pelita demo03_smartrandom.py demo02_random.py
     Replay this game with --seed 7487886765553999309
-    Using layout 'normal_018'
     ᗧ blue team 'demo03_smartrandom.py' -> 'SmartRandomBots'
     ᗧ red team 'demo02_random.py' -> 'RandomBots'
     ...
@@ -171,7 +170,7 @@ The test first has to set up a game environment by using the utility function `s
 
 **`setup_test_game(layout, is_blue=True, round=None, score=None, seed=None, food=None, bots=None, is_noisy=None) ⟶ bot`**
 
-Given a layout, it returns a [Bot](#the-bot-object) which you can pass to the [move](#the-move-function) function.
+Given a layout string, it returns a [Bot](#the-bot-object) which you can pass to the [move](#the-move-function) function.
 
 The blue team's homezone is always on the left and the red team's homezone is always on the right. In the `setup_test_game` function you can pass `is_blue` which defines which side you are currently playing on.
 
@@ -185,16 +184,25 @@ $ python
 
 
 ## Layouts
-When you play a game using the command `pelita` without specifying a specific layout with the `--layout` option, one of the built-in layouts will be picked at random. The name of the used layout is seen in the lower right corner of the GUI and it is also print to the terminal:
+When you play a game using the command `pelita` without specifying a specific layout with the `--layout` option, a random layout will be generated.
+
+When you run your own games or write tests, you may want to play a game on a fixed layout. You can save a layout generated with a specific random seed to a file:
 ```bash
-$ pelita
-Replay this game with --seed 354761256309345545
-Using layout 'normal_035'
+$ pelita --seed 12345 --save-layout test_12345.layout
+```
+And then play on this layout:
+```bash
+$ pelita --layout test_12345.layout
+```
+You can use the saved layout in `setup_test_game` by passing the content of the file as a string:
+```bash
+$ python
+>>> from pelita.utils import setup_test_game
+>>> layout_str = open('test_12345.layout', 'rt').read()
+>>> bot = setup_test_game(layout_str, ....)
 ```
 
-When you run your own games or write tests, you may want to play a game on a fixed layout. You can do that by specifying the option `--layout normal_035` to the `pelita` command, or passing `layout="normal_035"` to `setup_test_game`.
-
-You may also want to specify very simple layouts to test some basic features of your bot that require you to know exactly where the walls, the enemies and the food are. In this case you can pass to `setup_test_game` a layout string. There are several examples of layout strings in the demo tests.
+You may also want to specify very simple layouts to test some basic features of your bot that require you to know exactly where the walls, the enemies and the food are. In this case you can pass to `setup_test_game` a manually crafted layout string. There are several examples of layout strings in the demo tests.
 
 By inserting `print(bot)` within your `move` function, you can print the layout string corresponding to the current layout, together with other useful information. An example:
 ```
