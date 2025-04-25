@@ -22,14 +22,14 @@ def move(bot, state):
         state[1] = init_defend_state()
 
     turn = bot.turn
-    if bot.enemy[0].is_noisy and bot.enemy[1].is_noisy:
-        # if both enemies are noisy, just aim for our turn companion
+    if (not bot.enemy[0].is_close) and (not bot.enemy[1].is_close):
+        # if both enemies are far away, just aim for our turn companion
         target = bot.enemy[turn].position
-    elif not bot.enemy[turn].is_noisy:
-        # if our turn companion is not noisy, go for it
+    elif bot.enemy[turn].is_close:
+        # if our turn companion is close, go for it
         target = bot.enemy[turn].position
-    elif not bot.enemy[1-turn].is_noisy:
-        # if the other enemy is not noisy, go for it
+    elif bot.enemy[1-turn].is_close:
+        # if the other enemy is close, go for it
         target = bot.enemy[1-turn].position
     else:
         raise Exception('We should never be here!')
