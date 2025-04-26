@@ -37,7 +37,7 @@ The rules:
 
 - **killing enemies**: when a ghost kills an enemy pac-man, the killed pac-man is immediately reset to its starting position and **5 points** are scored for the ghost's team.
 
-- **noisy enemy positions**: bots can know their enemies' exact positions only when the enemies are within a distance of **5** squares. If the enemies are further away than that, the bots have access only to a noisy position (more details [below](#is-noisy)).
+- **enemy positions**: a bot can know the exact position of the enemies only when the enemies are close enough. A bot as a "sight" radius of  **5** squares. When enemies are located within the sight radius the bot will know their position exactly. If the enemies are further away than that, the bot will only get an approximate position of the enemies (more details [below](#has-exact-position)).
 
 - **food relocation**: a ghost casts a shadow of **1** square around itself. Food pellets that stay in the shadow of a ghost for more than 15 rounds without interruption are moved to a different location at random (more details [below](#shaded-food)).
 
@@ -74,7 +74,7 @@ The files named  `test_demoXX_XXX.py` are example unit tests for some of the dem
 $ python -m pytest
 ```
 
-In the `notebooks` folder you can find some examples of other ways of interacting with the pelita code. [notebooks/nb1_matplotlib_and_numpy.ipynb](notebooks/nb1_matplotlib_and_numpy.ipynb) shows how you might use numpy arrays and matplotlib to visualize game states. [notebooks/nb2_enemy_noise.ipynb](notebooks/nb2_enemy_noise.ipynb) uses the same approach to visualize enemy positions and noisy positions[as explained below](#is-noisy). Notebooks can be a useful way to get an intuition for the `bot` object properties or for visualizing game statistics, but should not be used to actually write your bot.
+In the `notebooks` folder you can find some examples of other ways of interacting with the pelita code. [notebooks/nb1_matplotlib_and_numpy.ipynb](notebooks/nb1_matplotlib_and_numpy.ipynb) shows how you might use numpy arrays and matplotlib to visualize game states. [notebooks/nb2_enemy_noise.ipynb](notebooks/nb2_enemy_noise.ipynb) uses the same approach to visualize enemy positions and approximate positions[as explained below](#has-exact-position). Notebooks can be a useful way to get an intuition for the `bot` object properties or for visualizing game statistics, but should not be used to actually write your bot.
 
 ## Running a game
 - To run a demo game, just type at the command line:
@@ -217,7 +217,7 @@ Playing on blue side. Current turn: 1. Bot: b. Round: 79, score: 11:15. timeouts
 #     #    #      .   .  .     #
 ################################
 Bots: {'a': (7, 8), 'x': (20, 9), 'b': (28, 6), 'y': (21, 11)}
-Noisy: {'a': False, 'x': True, 'b': False, 'y': True}
+Exact: {'a': True, 'x': False, 'b': True, 'y': False}
 Food: [(4, 9), (14, 13), (10, 6), (1, 6), (1, 9), (13, 11), (4, 5), (14, 9), (5, 6),
 (9, 1), (8, 5), (9, 4), (13, 4), (9, 13), (13, 1), (13, 7), (1, 11), (6, 1), (7, 3),
 (12, 5), (14, 5), (3, 11), (14, 8), (5, 5), (8, 4), (10, 10), (13, 6), (7, 5),
@@ -226,7 +226,7 @@ Food: [(4, 9), (14, 13), (10, 6), (1, 6), (1, 9), (13, 11), (4, 5), (14, 9), (5,
 (25, 14), (26, 9), (18, 14)]
 ```
 
-The walls are identified by `#`, the food by `.`, the bots are `a` `b` for the blue team and `x` `y` for the red team. The exact coordinates of all food pellets, the bots and their noisy state are listed. More details about noise [below](#is-noisy).
+The walls are identified by `#`, the food by `.`, the bots are `a` `b` for the blue team and `x` `y` for the red team. The exact coordinates of all food pellets and of the bots (with a note about their precision). More details about bot position precision [below](#has-exact-position).
 
 You can create smaller mazes, which are easier to test with and can be typed directly into the tests. For example a maze `8x4` with the blue bots in `(1, 1)` and `(1, 2)`, where the red bots are on `(5,2)` and `(6,2)` and food pellets in `(2, 2)` and `(6,1)`, and an additional wall in `(4,1)` will look like this:
 ```python
@@ -262,7 +262,7 @@ Playing on blue side. Current turn: 0. Bot: a. Round: None, score: 0:0. timeouts
 #b.  xy#
 ########
 Bots: {'a': (1, 1), 'x': (5, 2), 'b': (1, 2), 'y': (6, 2)}
-Noisy: {'a': False, 'x': False, 'b': False, 'y': False}
+Exact: {'a': True, 'x': True, 'b': True, 'y': True}
 Food: [(1, 1), (1, 2), (2, 2), (6, 2), (5, 1), (5, 2)]
 ...
 ```
@@ -374,7 +374,7 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
     ```python
     bot.enemy[0].position
     ```
-    This position may be not exact (see below the `is_noisy` property).
+    This position may be not exact (see below the `has_exact_position` property).
 
 - **`bot.enemy[0].food`** is the list of coordinates of the food pellets you want to eat.
 
@@ -382,7 +382,17 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
 
 - **`bot.enemy[0].team_time`** you can also inspect the accumulated time that the enemy has used so far.
 
-- **`bot.enemy[0].is_noisy`**  <a id="is-noisy"></a> your bot has a sight-radius of 5 squares. This means that when an enemy bot is located more than 5 squares away from your bot, `bot.enemy[0].position` will not be exact and `bot.enemy[0].is_noisy` will be `True`. The sight-radius for red bot `y` is the red area in the picture below. Red bot `y` will see the exact position of blue bot `a`, because it falls into its sight-radius. Instead, red bot `y` will see blue bot `b` as if it were located in one random legal position up to 5 squares away from its true position. An example of using the `is_noisy` property is given in [demo05_basic_defender.py](demo05_basic_defender.py).
+- **`bot.enemy[0].has_exact_position`**  <a id="has-exact-position"></a> your bot has a sight-radius of 5 squares. When an enemy bot is close enough, i.e. when the enemy bot is located within the sight radius of your bot, the `bot.enemy[0].has_exact_position` attribute will be `True` and `bot.enemy[0].position` will be the exact position of the enemy bot. If instead the enemy bot is further away, `bot.enemy[0].has_exact_position` will be `False` and `bot.enemy[0].position` will be only an approximation of the real position of the enemy bot. In this case the real position of the enemy bot could be anywhere within 5 squares of `bot.enemy[0].position`.
+
+  This is better explained by the looking at the picture below. Let's assume your bot is the red bot `y` and it is `y`'s turn to move. The sight-radius for `y` is the red area:
+  - `y` will "see" the exact position of enemy bot `b`, because `b` is close to `y`: `bot.enemy[1].has_exact_position==True` and `bot.enemy[1].position` will be exact.
+  - The situation is different for the other enemy bot. `a` is not within the sight-radius of `y`, so `bot.enemy[0].has_exact_position==False` and `bot.enemy[0].position` will be an approximation of the `a` real position.
+
+    In the picture you see the blue bot `a` located on its real position. `y` will not have access to that position. Instead, when calling `bot.enemy[0].position`, `y` will get the approximate location indicated by the faint outline of bot `a` in the picture. The approximate position is chosen at random among the legal positions within 5 squares of the exact one.
+
+  An example of using the `has_exact_position` property is given in [demo05_basic_defender.py](demo05_basic_defender.py).
+
+    ![](pelita_GUI_debug.png)
 
 ### Running multiple games in the background
 You may want to run multiple games in the background to gather statistics about your implementation,
@@ -398,7 +408,7 @@ When you push the `debug` button in the GUI you'll see a lot more info. You can 
 - the move that the current bot has just made is denoted by an highlighted square with an arrow
 - the "sight radius" of the current bot, i.e. the squares around the current bot where the position of the enemy is known exactly
 - the "shadow" of the current bot, i.e. the squares defining the "food" shadow of the current bot: the food pellets in the shadow will turn grey 3 rounds before they getting relocated 
-- if the enemy positions are noisy, you will see the silhouette of the enemy at `bot.enemy[X].position` in addition to the real position, which you have no access to from your code
+- if the enemies are not close, you will see the silhouette of the enemy at `bot.enemy[X].position` in addition to the real position, which you have no access to from your code
 
 ![](pelita_GUI_debug.png)
 

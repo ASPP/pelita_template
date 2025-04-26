@@ -22,17 +22,16 @@ def move(bot, state):
         state[1] = init_defend_state()
 
     turn = bot.turn
-    if (not bot.enemy[0].is_close) and (not bot.enemy[1].is_close):
-        # if both enemies are far away, just aim for our turn companion
-        target = bot.enemy[turn].position
-    elif bot.enemy[turn].is_close:
+
+    if bot.enemy[turn].has_exact_position:
         # if our turn companion is close, go for it
         target = bot.enemy[turn].position
-    elif bot.enemy[1-turn].is_close:
+    elif bot.enemy[1-turn].has_exact_position:
         # if the other enemy is close, go for it
         target = bot.enemy[1-turn].position
     else:
-        raise Exception('We should never be here!')
+        # if both enemies are far away just aim for our turn companion
+        target = bot.enemy[turn].position
 
     # get the next position along the shortest path to our target enemy bot
     next_pos = networkx.shortest_path(bot.graph, bot.position, target)[1]
