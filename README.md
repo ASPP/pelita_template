@@ -41,13 +41,11 @@ The rules:
 
 - **food relocation**: a ghost casts a shadow of **1** square around itself. Food pellets that stay in the shadow of a ghost for more than 15 rounds without interruption are moved to a different location at random (more details [below](#shaded-food)).
 
-- **timeouts**: each bot has **3** seconds to return a valid move. If it doesn't return in time a random legal move is executed instead and an error is recorded.
+- **timeouts**: each bot has **3** seconds to return a valid move. If it doesn't return in time a random legal move is executed. At the 5th timeout the team is disqualified and the game is over. 
 
-- **illegal moves**: if a bot returns an illegal move, a random legal move is executed instead and an error is recorded.
+- **illegal moves**: if a bot returns an illegal move, the team is immediately disqualified and the game is over.
 
-- **errors**: each team can commit a maximum of 4 errors. At the 5th error the team is disqualified and the game is over. Errors are either illegal moves or timeouts.
-
-- **fatal errors**: if a bot raises an Exception, the team is immediately disqualified and the game is over.
+- **exceptions**: if a bot raises an Exception, the team is immediately disqualified and the game is over.
 
 - **game over**: the game ends when one team eats all of its enemy's food pellets **or** after **300** rounds **or** when a team is disqualified.
 
@@ -306,7 +304,7 @@ The `move` function gets two input arguments:
 
 The `move` function returns the position to move the bot to in the current turn. The position is a tuple of two integers `(x, y)`, which are the coordinates on the game grid.
 
-Note that the returned value must represent a legal position, i.e. it must be an adjacent position and you can not move your bot onto a wall or outside of the maze. If you return an illegal position, a legal position will be chosen at random instead and an error will be recorded for your team. After 5 errors the game is over and you lose the game.
+Note that the returned value must represent a legal position, i.e. it must be an adjacent position and you can not move your bot onto a wall or outside of the maze. If you return an illegal position, your team is immediately disqualified, the game is over and you lose the game.
 
 ### The `Bot` object
 Note that the `Bot` object is read-only, i.e. any modifications you make to that object within the `move` function will be discarded at the next round. Use the `state` dictionary for keeping track of information between rounds.
@@ -366,7 +364,7 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
     ```
     Note that you want to do it only **once** per game!
 
-- **`bot.error_count`** is a count of the errors your team has collected. Remember that if you commit 5 errors you lose the game, independent of the score. Errors are either timeouts (it takes longer than 3 seconds to execute your `move` function) or illegal positions returned by your `move` function.
+- **`bot.error_count`** is a count of the timeouts your team has collected. Remember that if you timeout 5 times you lose the game, independent of the score. A timeout occurs if your `move` function takes longer than 3 seconds to return
 
 - **`bot.say(text)`** allows you to print `text` as a sort of speech bubble attached to your bot in the graphical user interface.
 
