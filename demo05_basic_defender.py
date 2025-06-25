@@ -8,18 +8,18 @@
 import networkx
 
 
-TEAM_NAME = 'Basic Defender Bots'
+TEAM_NAME = 'Basic Hunter Bots'
 
-def init_defend_state():
+def init_hunt_state():
     return {
-            "defend_target": None,
-            "defend_path": None,
+            "hunter_target": None,
+            "hunter_path": None,
         }
 
 def move(bot, state):
     if state == {}:
-        state[0] = init_defend_state()
-        state[1] = init_defend_state()
+        state[0] = init_hunt_state()
+        state[1] = init_hunt_state()
 
     turn = bot.turn
 
@@ -36,7 +36,7 @@ def move(bot, state):
     # get the next position along the shortest path to our target enemy bot
     next_pos = networkx.shortest_path(bot.graph, bot.position, target)[1]
     # we save the current target in our state dictionary
-    state[bot.turn]["defend_target"] = target
+    state[bot.turn]["hunter_target"] = target
 
     # let's check that we don't go into the enemy homezone, i.e. stop at the
     # border

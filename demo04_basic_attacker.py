@@ -6,12 +6,12 @@
 
 import networkx
 
-TEAM_NAME = 'Basic Attacker Bots'
+TEAM_NAME = 'Basic Gatherer Bots'
 
-def init_attack_state():
+def init_gather_state():
     return {
-            "attack_target": None,
-            "attack_path": None,
+            "gatherer_target": None,
+            "gatherer_path": None,
         }
 
 def move(bot, state):
@@ -20,14 +20,14 @@ def move(bot, state):
         # Initialize the state dictionary.
         # Each bot needs its own state dictionary to keep track of the
         # food targets.
-        state[0] = init_attack_state()
-        state[1] = init_attack_state()
+        state[0] = init_gather_state()
+        state[1] = init_gather_state()
 
     # define a few variables for less typing
     enemy = bot.enemy
 
-    target = state[bot.turn]["attack_target"]
-    path = state[bot.turn]["attack_path"]
+    target = state[bot.turn]["gatherer_target"]
+    path = state[bot.turn]["gatherer_path"]
 
     # choose a target food pellet if we still don't have one or
     # if the old target is not there anymore. This can happen for
@@ -41,8 +41,8 @@ def move(bot, state):
         # use networkx to get the shortest path from here to the target
         # we do not use the first position, which is always equal to bot_position
         path = networkx.shortest_path(bot.graph, bot.position, target)[1:]
-        state[bot.turn]["attack_path"] = path
-        state[bot.turn]["attack_target"] = target
+        state[bot.turn]["gatherer_path"] = path
+        state[bot.turn]["gatherer_target"] = target
 
     # get the next position along the shortest path to reach our target
     next_pos = path.pop(0)
@@ -58,8 +58,8 @@ def move(bot, state):
         if next_pos not in safe_positions:
             # 1. Let's forget about this target and this path
             #    We will choose a new target in the next round
-            state[bot.turn]["attack_target"] = None
-            state[bot.turn]["attack_path"] = None
+            state[bot.turn]["gatherer_target"] = None
+            state[bot.turn]["gatherer_path"] = None
             # watch out! We only want to overwrite these two keys:
             # in your bots you may have other relevant information in the state
             # dictionary that you don't want to delete here!
