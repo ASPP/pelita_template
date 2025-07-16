@@ -81,7 +81,7 @@ In the `notebooks` folder you can find some examples of other ways of interactin
     ```
 - To test a demo implementation against another one:
     ```bash
-    $ pelita demo03_smartrandom.py demo05_basic_defender.py
+    $ pelita demo03_smartrandom.py demo05_basic_hunter.py
     ```
 More info about the command `pelita` [below](#manual-testing)
 
@@ -204,7 +204,7 @@ You may also want to specify very simple layouts to test some basic features of 
 
 By inserting `print(bot)` within your `move` function, you can print the layout string corresponding to the current layout, together with other useful information. An example:
 ```
-Basic Attacker Bots (you) vs Basic Defender Bots.
+Basic Gatherer Bots (you) vs Basic Hunter Bots.
 Playing on blue side. Current turn: 1. Bot: b. Round: 79, score: 11:15. timeouts: 0:0
 ################################
 #     .  .   .      #    #     #
@@ -286,7 +286,7 @@ The `move` function gets two input arguments:
 
 - **`bot`** is a reference to the bot in your team corresponding to the current turn. It is an instance of the [`Bot` object](#the-bot-object), which contains all information about the current state of the game
 
-- **`state`** is a dictionary which can be used to hold information persistently over rounds. It is empty when the game starts. In the `move` function you can store whatever you want in it. Examples for the usage of the `state` dictionary can be found in [demo04_basic_attacker.py](demo04_basic_attacker.py), [demo05_basic_defender.py](demo05_basic_defender.py), [demo06_switching_bots.py](demo06_switching_bots.py):
+- **`state`** is a dictionary which can be used to hold information persistently over rounds. It is empty when the game starts. In the `move` function you can store whatever you want in it. Examples for the usage of the `state` dictionary can be found in [demo04_basic_gatherer.py](demo04_basic_gatherer.py), [demo05_basic_hunter.py](demo05_basic_hunter.py), [demo06_switching_bots.py](demo06_switching_bots.py):
     ```python
     def move(bot, state):
         state['something_to_remember'] = 'an important string'
@@ -330,7 +330,7 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
 
 - **`bot.graph`** is a representation of the maze as a graph. The graph represents the free squares in the maze –i.e. all the non-wall coordinates– and their connections. The `bot.graph` object is an instance of the [`Graph`](https://networkx.org/documentation/stable/reference/classes/graph.html) class from the  [networkx](https://networkx.github.io) library. `bot.graph` is immutable: an editable copy of the graph is returned by the `bot.graph.copy()` method if you need it. 
 
-    Examples for using a graph representation for shortest path calculations using the [networkx](https://networkx.github.io) library can be found in [demo04_basic_attacker.py](demo04_basic_attacker.py) and [demo05_basic_defender.py](demo05_basic_defender.py).
+    Examples for using a graph representation for shortest path calculations using the [networkx](https://networkx.github.io) library can be found in [demo04_basic_gatherer.py](demo04_basic_gatherer.py) and [demo05_basic_hunter.py](demo05_basic_hunter.py).
  
 - **`bot.shape`** is a tuple with the size of the maze. The usual maze size will be `32x16`, that is `(32, 16)`, unless other layouts are specified.
 
@@ -396,7 +396,7 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
 
     In the picture you see the blue bot `a` located on its real position. `y` will not have access to that position. Instead, when calling `bot.enemy[0].position`, `y` will get the approximate location indicated by the faint outline of bot `a` in the picture. The approximate position is chosen at random among the legal positions within 5 squares of the exact one.
 
-  An example of using the `has_exact_position` property is given in [demo05_basic_defender.py](demo05_basic_defender.py).
+  An example of using the `has_exact_position` property is given in [demo05_basic_hunter.py](demo05_basic_hunter.py).
 
     ![](pelita_GUI_debug.png)
 

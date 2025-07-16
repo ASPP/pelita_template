@@ -3,12 +3,12 @@
 # python3 demo08_background_games.py
 #
 # - Run 100 games in the background to gather statistics
-# - We'll use a team of basic defenders against a team of basic attackers
+# - We'll use a team of basic hunters against a team of basic gatherers
 
 from pelita.utils import run_background_game
 
-from demo05_basic_defender import move as move_defender
-from demo04_basic_attacker import move as move_attacker
+from demo05_basic_hunter import move as move_hunter
+from demo04_basic_gatherer import move as move_gatherer
 
 NUM_GAMES = 100
 
@@ -20,15 +20,15 @@ for idx in range(NUM_GAMES):
     # dictionary to store game parameters
     game = {}
 
-    # play with the defenders and attackers as blue and red team alternatively
+    # play with the hunters and gatherers as blue and red team alternatively
     if idx%2 == 0:
-        blue = move_defender
-        red = move_attacker
-        game['blue'] = 'defender'
+        blue = move_hunter
+        red = move_gatherer
+        game['blue'] = 'hunter'
     else:
-        blue = move_attacker
-        red = move_defender
-        game['blue'] = 'attacker'
+        blue = move_gatherer
+        red = move_hunter
+        game['blue'] = 'gatherer'
 
     # play each time on a different maze
     result = run_background_game(blue_move=blue, red_move=red)
@@ -53,15 +53,15 @@ for idx in range(NUM_GAMES):
 #blue = replay['blue']
 # - get the random seed for the game
 #seed = replay['result']['seed']
-# - let's assume that the attacker was blue, and the sed was 1234567,
+# - let's assume that the gatherer was blue, and the seed was 1234567,
 #   then you can replay on the terminal with
-# pelita --seed 1234567 demo04_basic_attacker.py demo05_basic_defender.py
+# pelita --seed 1234567 demo04_basic_gatherer.py demo05_basic_hunter.py
 
 # Here we only want to print some basic stats
-attacker_wins = 0
-defender_wins = 0
+gatherer_wins = 0
+hunter_wins = 0
 draws = 0
-# this is attacker_score-defender_score
+# this is gatherer_score-defender_score
 score_difference = 0
 
 for i, game in enumerate(collection):
@@ -69,18 +69,18 @@ for i, game in enumerate(collection):
     result = game['result']
     if result['draw']:
         draws += 1
-    elif blue == 'attacker':
-        attacker_wins += result['blue_wins']
-        defender_wins += result['red_wins']
+    elif blue == 'gatherer':
+        gatherer_wins += result['blue_wins']
+        hunter_wins += result['red_wins']
         score_difference += result['blue_score'] - result['red_score']
-    elif blue == 'defender':
-        attacker_wins += result['red_wins']
-        defender_wins += result['blue_wins']
+    elif blue == 'hunter':
+        gatherer_wins += result['red_wins']
+        hunter_wins += result['blue_wins']
         score_difference += result['red_score'] - result['blue_score']
 
 print(f'Games played: {len(collection)}')
-print(f'Attacker wins: {attacker_wins}')
-print(f'Defender wins: {defender_wins}')
+print(f'Gatherer wins: {gatherer_wins}')
+print(f'Hunter wins: {hunter_wins}')
 print(f'Draws: {draws}')
 print(f'Average score difference: {score_difference/(i+1)}')
 
