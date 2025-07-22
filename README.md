@@ -39,7 +39,7 @@ The rules:
 
 - **enemy positions**: a bot can know the exact position of the enemies only when the enemies are close enough. A bot as a "sight" radius of  **5** squares. When enemies are located within the sight radius the bot will know their position exactly. If the enemies are further away than that, the bot will only get an approximate position of the enemies (more details [below](#has-exact-position)).
 
-- **food relocation**: a ghost casts a shadow of **1** square around itself. Food pellets that stay in the shadow of a ghost for more than 15 rounds without interruption are moved to a different location at random (more details [below](#shaded-food)).
+- **food relocation**: a ghost casts a shadow of **2** square around itself. Food pellets that stay in the shadow of a ghost for more than 15 rounds without interruption are moved to a different location at random (more details [below](#shaded-food)).
 
 - **timeouts**: each bot has **3** seconds to return a valid move. If it doesn't return in time a random legal move is executed. At the 5th timeout the team is disqualified and the game is over. 
 
@@ -350,7 +350,7 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
     ```
     as soon as the enemy starts eating your food pellets this list will shorten up!
 
-- **`bot.shaded_food`** <a id="shaded-food"></a> a list of the food pellets currently in the shadow of one or both of the team's bots. When a bot is in its homezone it casts a shadow of **1** square around itself. Food pellets that happen to be in the shadow for **15** rounds without interruption will get relocated at the next turn. When a food pellet turns grey in the GUI it indicates that there are only 3 rounds left before being relocated. The new position of the pellets is chosen randomly within the free squares of the bot homezone, but outside of the bot's shadow and not on top of another bot. Note that **`bot.enemy[0].shaded_food`** is always empty: you cannot see which food pellets are in the shadow of the enemy.
+- **`bot.shaded_food`** <a id="shaded-food"></a> a list of the food pellets currently in the shadow of one or both of the team's bots. When a bot is in its homezone it casts a shadow of **2** square around itself. Food pellets that happen to be in the shadow for **15** rounds without interruption will get relocated at the next turn. When a food pellet turns grey in the GUI it indicates that there are only 3 rounds left before being relocated. The new position of the pellets is chosen randomly within the free squares of the bot homezone, but outside of the bot's shadow and not on top of another bot. Note that **`bot.enemy[0].shaded_food`** is always empty: you cannot see which food pellets are in the shadow of the enemy.
 
 - **`bot.track`** is a list of the coordinates of the positions that the bot has taken until now. It gets reset every time the bot gets killed by an enemy ghost.
 
