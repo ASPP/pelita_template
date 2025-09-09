@@ -91,7 +91,9 @@ More info about the command `pelita` [below](#manual-testing)
 
 Pelita’s graphical interface contains a few tools that can help with debugging. For example, using the ‘slower’ and ‘faster’ buttons, one may change the maximum speed of the game. (Of course, it is not possible to speed up slow bots using this.)
 
-When the game has been paused, the `step` and `round` buttons will execute a single step or play a complete round. Additionally, selecting a specific square in the grid will show its coordinates and if the square is a wall or contains food or bots are sitting on it.
+The button `play/pause` stops or restarts the game. The buttons `previous` and `next` enter playback mode, where you can visualize the history of the game. With `previous` you go back one step in history, with `next` you go forward one step in history.
+
+Additionally, selecting a specific square in the grid will show its coordinates and if the square is a wall or contains food or bots are sitting on it.
 
 The `debug` button activates the [debug mode](#debug-using-the-gui).
 
@@ -102,9 +104,9 @@ The `debug` button activates the [debug mode](#debug-using-the-gui).
     #               Toggle debug mode
     >               Increase speed
     <               Decrease speed
-    [Space]         Play/pause
-    [Enter]         Play a single step (when in pause mode)
-    [Shift+Enter]   Play one round (when in pause mode)
+    [Left Arrow]    Go back one step
+    [Right Arrow]   Go forward one step
+    [Space]         Toggle play/pause
 
 
 ## Testing
