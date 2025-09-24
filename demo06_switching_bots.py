@@ -27,7 +27,7 @@ def init_state(personality):
 def move(bot, state):
     # Our state consists of two “substates”, one for each bot.
     # In order for the substates to work properly with the imported
-    # `move_gatherer` and `move_hunter` funcions, we need to be sure
+    # `move_gatherer` and `move_hunter` functions, we need to be sure
     # that the relevant attributes in the state are properly prefixed
     # (and each of the functions only works with “their” prefixed version).
 
@@ -49,4 +49,3 @@ def move(bot, state):
         next_pos = move_hunter(bot, state)
         bot.say('hunter')
     return next_pos
-

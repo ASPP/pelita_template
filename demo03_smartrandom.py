@@ -13,7 +13,7 @@ def move(bot, state):
 
     # sensible positions are all legal positions that do not cause death
     sensible_positions = []
-    # loop throuh all legal_positions for this bot
+    # loop through all legal_positions for this bot
     for next_pos in bot.legal_positions:
         # each legal position is good unless we step on a ghost outside our homezone
         if (next_pos in enemy_pos) and (next_pos not in bot.homezone):

@@ -83,4 +83,3 @@ print(f'Gatherer wins: {gatherer_wins}')
 print(f'Hunter wins: {hunter_wins}')
 print(f'Draws: {draws}')
 print(f'Average score difference: {score_difference/(i+1)}')
-
