@@ -38,8 +38,8 @@ def move(bot, state):
             # or, if 2. we are in enemy's homezone and we can eat food
             cond2 = (new_pos in enemy[0].homezone) and (new_pos in enemy[0].food)
             if cond1 or cond2:
-                    # if either one condition is met, this position is interesting
-                    interesting_positions.append(new_pos)
+                # if either one condition is met, this position is interesting
+                interesting_positions.append(new_pos)
         # now we have scanned all sensible positions
         # do we have any interesting left?
         if len(interesting_positions) > 0:
