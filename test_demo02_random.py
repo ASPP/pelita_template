@@ -1,5 +1,6 @@
-from demo02_random import move
 from pelita.utils import setup_test_game
+
+from demo02_random import move
 
 
 def test_always_legal_simple_layout():

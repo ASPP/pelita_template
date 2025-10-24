@@ -1,5 +1,7 @@
-from demo04_basic_gatherer import move
 from pelita.utils import setup_test_game
+
+from demo04_basic_gatherer import move
+
 
 def test_eat_food():
     # do we eat food when it's available?

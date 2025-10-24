@@ -7,8 +7,8 @@
 
 from pelita.utils import run_background_game
 
-from demo05_basic_hunter import move as move_hunter
 from demo04_basic_gatherer import move as move_gatherer
+from demo05_basic_hunter import move as move_hunter
 
 NUM_GAMES = 100
 

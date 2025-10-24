@@ -1,5 +1,7 @@
-from demo05_basic_hunter import move
 from pelita.utils import setup_test_game
+
+from demo05_basic_hunter import move
+
 
 def test_kill_enemy():
     # do we kill enemies when possible?
