@@ -7,7 +7,6 @@
 
 import networkx
 
-
 TEAM_NAME = 'Basic Hunter Bots'
 
 def init_hunt_state():

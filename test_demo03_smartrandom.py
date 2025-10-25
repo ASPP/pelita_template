@@ -1,5 +1,7 @@
-from demo03_smartrandom import move
 from pelita.utils import setup_test_game
+
+from demo03_smartrandom import move
+
 
 def test_legalmoves():
     # check that the only two valid moves are always returned
@@ -10,7 +12,7 @@ def test_legalmoves():
     #b. .xy#
     ########
     """
-    for i in range(10):
+    for _ in range(10):
         bot = setup_test_game(layout=layout, is_blue=True)
         next_pos = move(bot, {})
         assert next_pos in ((1,2), (1,1))

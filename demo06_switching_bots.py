@@ -4,9 +4,8 @@
 # strategy. Once the gathering bot is killed, it restarts as a hunter, while
 # the previous hunter changes its personality and becomes the new gatherer.
 
-from demo05_basic_hunter import move as move_hunter
 from demo04_basic_gatherer import move as move_gatherer
-
+from demo05_basic_hunter import move as move_hunter
 
 TEAM_NAME = 'Switching Bots'
 
