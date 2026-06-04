@@ -72,8 +72,6 @@ The files named  `test_demoXX_XXX.py` are example unit tests for some of the dem
 $ python -m pytest
 ```
 
-In the `notebooks` folder you can find some examples of other ways of interacting with the pelita code. [notebooks/nb1_matplotlib_and_numpy.ipynb](notebooks/nb1_matplotlib_and_numpy.ipynb) shows how you might use numpy arrays and matplotlib to visualize game states. [notebooks/nb2_enemy_noise.ipynb](notebooks/nb2_enemy_noise.ipynb) uses the same approach to visualize enemy positions and approximate positions[as explained below](#has-exact-position). Notebooks can be a useful way to get an intuition for the `bot` object properties or for visualizing game statistics, but should not be used to actually write your bot.
-
 ## Running a game
 - To run a demo game, just type at the command line:
     ```bash
