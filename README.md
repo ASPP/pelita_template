@@ -360,6 +360,8 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
 
 - **`bot.other`**: the other bot in your team. It is a reference to a `Bot` object.
 
+- **`bot.paint_background`**: color the background of a cell in the maze with a specified color. The colored background is visible when running in [debug mode](#debug-using-the-gui). For an example on how to use it, see  [demo09_paint_background.py](demo09_paint_background.py).
+
 - **`bot.position`**: a tuple of the coordinates your bot is on at the moment. For example `(3, 9)`.
 
 - **`bot.random`**: an instance of the Python internal pseudo-random number generator. Do not import the Python `random` module in your code, just use this for all your random operations. Example of using it are found in [demo02_random.py](demo02_random.py), [demo03_smartrandom.py](demo03_smartrandom.py), and several others. If you need to use the `numpy` random module, initialize it with a seed taken from this instance like this:
