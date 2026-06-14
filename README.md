@@ -10,16 +10,17 @@ Pelita
   - [Running a game](#running-a-game)
   - [The graphical interface](#the-graphical-interface)
     - [Keyboard shortcuts](#keyboard-shortcuts)
-  - [Testing](#testing)
-    - [Manual testing](#manual-testing)
-    - [Unit testing](#unit-testing)
-  - [Layouts](#layouts)
-  - [Full API Description](#full-api-description)
-    - [The maze](#the-maze)
-    - [The `move` function](#the-move-function)
-    - [The `Bot` object](#the-bot-object)
-    - [Running multiple games in the background](#running-multiple-games-in-the-background)
-  - [Debug using the GUI](#debug-using-the-gui)
+- [Testing](#testing)
+  - [Manual testing](#manual-testing)
+  - [Unit testing](#unit-testing)
+- [Layouts](#layouts)
+- [Full API Description](#full-api-description)
+  - [The maze](#the-maze)
+  - [The `move` function](#the-move-function)
+  - [The `Bot` object](#the-bot-object-all-methods-and-attributes-in-alphabetical-order)
+- [Enemy positions](#enemy-positions)
+- [Running multiple games in the background](#running-multiple-games-in-the-background)
+- [Debug using the GUI](#debug-using-the-gui)
 
 ------------------------------------------------
 
@@ -37,7 +38,7 @@ The rules:
 
 - **killing enemies**: when a ghost kills an enemy pac-man, the killed pac-man is immediately reset to its starting position and **5 points** are scored for the ghost's team.
 
-- **enemy positions**: a bot can know the exact position of the enemies only when the enemies are close enough. A bot as a "sight" radius of  **5** squares. When enemies are located within the sight radius the bot will know their position exactly. If the enemies are further away than that, the bot will only get an approximate position of the enemies (more details [below](#has-exact-position)).
+- **enemy positions**: a bot can know the exact position of the enemies only when the enemies are close enough. A bot as a "sight" radius of  **5** squares. When enemies are located within the sight radius the bot will know their position exactly. If the enemies are further away than that, the bot will only get an approximate position of the enemies (more details [below](#enemy-positions)).
 
 - **food relocation**: a ghost casts a shadow of **2** square around itself. Food pellets that stay in the shadow of a ghost for more than 15 rounds without interruption are moved to a different location at random (more details [below](#shaded-food)).
 
@@ -107,7 +108,8 @@ The `debug` button activates the [debug mode](#debug-using-the-gui).
     [Space]         Toggle play/pause
 
 
-## Testing
+Testing
+=======
 There are several strategies to test your bot implementations.
 
 ### Manual testing
@@ -181,7 +183,9 @@ $ python
 ```
 
 
-## Layouts
+Layouts
+=======
+
 When you play a game using the command `pelita` without specifying a specific layout with the `--layout` option, a random layout will be generated.
 
 When you run your own games or write tests, you may want to play a game on a fixed layout. You can save a layout generated with a specific random seed to a file:
@@ -192,7 +196,7 @@ And then play on this layout:
 ```bash
 $ pelita --layout test_12345.layout
 ```
-You can use the saved layout in `setup_test_game` by passing the content of the file as a string:
+You can use the saved layout in `setup_test_ga`bot.enemy[0].position`me` by passing the content of the file as a string:
 ```bash
 $ python
 >>> from pelita.utils import setup_test_game
@@ -274,7 +278,8 @@ Food: [(1, 1), (1, 2), (2, 2), (6, 2), (5, 1), (5, 2)]
 ```
 Notice that we have to pass the option `-s` to `pytest` so that it shows what we print. By default `pytest` swallows everything that gets printed to standard output and standard error on the terminal.
 
-## Full API Description
+Full API Description
+====================
 
 ### The maze
 The maze is a grid. Each square in the grid is defined by its coordinates. The default width of the maze is `32` squares, the default height is `16` squares. The coordinate system has the origin `(0, 0)` in the top left of the maze and its maximum value `(31, 15)` in the bottom right. Each square which is not a wall can be empty or contain a food pellet or one or more bots. The different mazes are called `layouts`. For the tournament all layouts will have the default values for width and height and will have a wall on all squares around the border.
@@ -306,18 +311,80 @@ The `move` function returns the position to move the bot to in the current turn.
 
 Note that the returned value must represent a legal position, i.e. it must be an adjacent position and you can not move your bot onto a wall or outside of the maze. If you return an illegal position, your team is immediately disqualified, the game is over and you lose the game.
 
-### The `Bot` object
+### The `Bot` object (all methods and attributes in alphabetical order)
 Note that the `Bot` object is read-only, i.e. any modifications you make to that object within the `move` function will be discarded at the next round. Use the `state` dictionary for keeping track of information between rounds.
 
-- **`bot.turn`** is the turn this bot is playing, either `0` (for bot `a` and `x`) or `1` (for bot `b` and `y`).
+- **`bot.char`**: the character representing the bot: `a`, `b`, `x` or `y`.
 
-- **`bot.other`** is the other bot in your team. It is a reference to a `Bot` object.
+- **`bot.deaths`**: the number of times your bot has been killed until now.
 
-- **`bot.position`** is a tuple of the coordinates your bot is on at the moment. For example `(3, 9)`.
+- **`bot.enemy`**: a list of length 2 containing the references to the two enemy bots, which are also `Bot` objects. So, for example:
 
-- **`bot.legal_positions`** is a list of positions your bot can take in the current turn without hitting a wall. At each turn the bot can move by one square in the grid, either horizontally or vertically, if the target square is not a wall. Note that the bot can always stay in the same position, i.e. you can let your `move` function return `bot.position`.
+  - **`bot.enemy[0].has_exact_position`**, **`bot.enemy[1].has_exact_position`**: `True` if the position of the correspongind enemy bot is known to you exactly. `False` if the position of the enemy is known to you only approximately . See [below](#enemy-positions) for a detailed explanation
 
-- **`bot.walls`** is a tuple of the coordinates of the walls in the maze:
+  - **`bot.enemy[0].position`**, **`bot.enemy[1].position`**:: the positions of the two enemy bot.  These positions may be only approximate (see the `has_exact_position` property above).
+ 
+  - **`bot.enemy[0].food`**: the list of coordinates of the food pellets into the enemy homezone, i.e. the ones you want to eat.
+
+  - **`bot.enemy[0].team_name`**: the enemy team name
+
+  - **`bot.enemy[0].team_time`**: the accumulated time that the enemy has used so far.
+
+- **`bot.error_count`**: count of the timeouts your team has collected. Remember that if you timeout 5 times you lose the game, independent of the score. A timeout occurs if your `move` function takes longer than 3 seconds to return
+
+- **`bot.food`**: the list of the coordinates of the food pellets in your own homezone
+    ```python
+    [(17, 8), (24, 8), (17, 7), ...]
+    ```
+    as soon as the enemy starts eating your food pellets this list will shorten up!
+
+- **`bot.graph`**: a representation of the maze as a graph. The graph represents the free squares in the maze –i.e. all the non-wall coordinates– and their connections. The `bot.graph` object is an instance of the [`Graph`](https://networkx.org/documentation/stable/reference/classes/graph.html) class from the  [networkx](https://networkx.github.io) library. `bot.graph` is immutable: an editable copy of the graph is returned by the `bot.graph.copy()` method if you need it. 
+
+    Examples for using a graph representation for shortest path calculations using the [networkx](https://networkx.github.io) library can be found in [demo04_basic_gatherer.py](demo04_basic_gatherer.py) and [demo05_basic_hunter.py](demo05_basic_hunter.py).
+
+- **`bot.homezone`**: a tuple of all the coordinates of your side of the maze that are not a wall. If for example you are the red team in a `32×16` maze, your homezone might be:
+    ```python
+    ((16, 1), (16, 2), (16, 3), ..., (30, 11), (30, 13), (30, 14))
+    ```
+    as with `bot.walls` you can test if position `(3, 9)` is in your homezone with
+    ```python
+    (3, 9) in bot.homezone
+    ```
+    You can check if you got assigned the blue team – your homezone is the left side of the maze – with **`bot.is_blue`**. Otherwise you are the red team and your homezone is the right side of the maze. The blue team always plays the first move.
+
+- **`bot.is_blue`**: `True` if you are in the blue team, `False` if you are in the red team.
+
+- **`bot.kills`**: the number of enemy bots your bots has killed until now.
+
+- **`bot.legal_positions`**: a list of positions your bot can take in the current turn without hitting a wall. At each turn the bot can move by one square in the grid, either horizontally or vertically, if the target square is not a wall. Note that the bot can always stay in the same position, i.e. you can let your `move` function return `bot.position`.
+
+- **`bot.other`**: the other bot in your team. It is a reference to a `Bot` object.
+
+- **`bot.position`**: a tuple of the coordinates your bot is on at the moment. For example `(3, 9)`.
+
+- **`bot.random`**: an instance of the Python internal pseudo-random number generator. Do not import the Python `random` module in your code, just use this for all your random operations. Example of using it are found in [demo02_random.py](demo02_random.py), [demo03_smartrandom.py](demo03_smartrandom.py), and several others. If you need to use the `numpy` random module, initialize it with a seed taken from this instance like this:
+    ```python
+    np.random.seed(bot.random.randint(0, 2**32-1))
+    ```
+    Note that you want to do it only **once** per game!
+
+- **`bot.round`**: the round you are playing.
+
+- **`bot.say(text)`** allows you to print `text` as a sort of speech bubble attached to your bot in the graphical user interface.
+
+- **`bot.score`**: the score of your team.
+
+- **`bot.shaded_food`** <a id="shaded-food"></a>: a list of the food pellets currently in the shadow of one or both of the team's bots. When a bot is in its homezone it casts a shadow of **2** square around itself. Food pellets that happen to be in the shadow for **15** rounds without interruption will get relocated at the next turn. When a food pellet turns grey in the GUI it indicates that there are only 3 rounds left before being relocated. The new position of the pellets is chosen randomly within the free squares of the bot homezone, but outside of the bot's shadow and not on top of another bot. Note that **`bot.enemy[0].shaded_food`** is always empty: you cannot see which food pellets are in the shadow of the enemy.
+
+- **`bot.shape`**: a tuple with the size of the maze. The usual maze size will be `32x16`, that is `(32, 16)`, unless other layouts are specified.
+
+- **`bot.team_time`**: the total accumulated time that your team has needed so far. Please note that the time does not increase during the execution of your bot’s code; it is only updated once at the beginning of a step.
+
+- **`bot.track`**: a list of the coordinates of the positions that the bot has taken until now. It gets reset every time the bot gets killed by an enemy ghost.
+
+- **`bot.turn`**: the turn this bot is playing, either `0` (for bot `a` and `x`) or `1` (for bot `b` and `y`).
+
+- **`bot.walls`**: a tuple of the coordinates of the walls in the maze:
     ```python
     ((0, 0), (1, 0), (2, 0), ..., (29, 15), (30, 15), (31, 15))
     ```
@@ -328,67 +395,13 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
 
     The maze is also represented as a graph in the attribute `bot.graph`.
 
-- **`bot.graph`** is a representation of the maze as a graph. The graph represents the free squares in the maze –i.e. all the non-wall coordinates– and their connections. The `bot.graph` object is an instance of the [`Graph`](https://networkx.org/documentation/stable/reference/classes/graph.html) class from the  [networkx](https://networkx.github.io) library. `bot.graph` is immutable: an editable copy of the graph is returned by the `bot.graph.copy()` method if you need it. 
+- **`bot.was_killed`**: `True` if the bot has been killed in the current round.
 
-    Examples for using a graph representation for shortest path calculations using the [networkx](https://networkx.github.io) library can be found in [demo04_basic_gatherer.py](demo04_basic_gatherer.py) and [demo05_basic_hunter.py](demo05_basic_hunter.py).
- 
-- **`bot.shape`** is a tuple with the size of the maze. The usual maze size will be `32x16`, that is `(32, 16)`, unless other layouts are specified.
+Enemy positions
+===============
+Your bots have a sight-radius of 5 squares. When an enemy bot is close enough, i.e. when the enemy bot is located within the sight radius of your bot, the `bot.enemy[0].has_exact_position`/`bot.enemy[1].has_exact_position` attribute will be `True` and `bot.enemy[0].position`/`bot.enemy[1].position` will be the exact position of the enemy bot.
 
-- **`bot.homezone`** is a tuple of all the coordinates of your side of the maze that are not a wall. If for example you are the red team in a `32×16` maze, your homezone might be:
-    ```python
-    ((16, 1), (16, 2), (16, 3), ..., (30, 11), (30, 13), (30, 14))
-    ```
-    as with `bot.walls` you can test if position `(3, 9)` is in your homezone with
-    ```python
-    (3, 9) in bot.homezone
-    ```
-    You can check if you got assigned the blue team – your homezone is the left side of the maze – with **`bot.is_blue`**. Otherwise you are the red team and your homezone is the right side of the maze. The blue team always plays the first move.
-
-- **`bot.food`** is the list of the coordinates of the food pellets in your own homezone
-    ```python
-    [(17, 8), (24, 8), (17, 7), ...]
-    ```
-    as soon as the enemy starts eating your food pellets this list will shorten up!
-
-- **`bot.shaded_food`** <a id="shaded-food"></a> a list of the food pellets currently in the shadow of one or both of the team's bots. When a bot is in its homezone it casts a shadow of **2** square around itself. Food pellets that happen to be in the shadow for **15** rounds without interruption will get relocated at the next turn. When a food pellet turns grey in the GUI it indicates that there are only 3 rounds left before being relocated. The new position of the pellets is chosen randomly within the free squares of the bot homezone, but outside of the bot's shadow and not on top of another bot. Note that **`bot.enemy[0].shaded_food`** is always empty: you cannot see which food pellets are in the shadow of the enemy.
-
-- **`bot.track`** is a list of the coordinates of the positions that the bot has taken until now. It gets reset every time the bot gets killed by an enemy ghost.
-
-- When you are killed, the property **`bot.was_killed`** is set to `True` until the next round.
-
-- **`bot.score`** and **`bot.round`** tell you the score of your team and the round you are playing.
-
-- **`bot.random`** is an instance of the Python internal pseudo-random number generator. Do not import the Python `random` module in your code, just use this for all your random operations. Example of using it are found in [demo02_random.py](demo02_random.py), [demo03_smartrandom.py](demo03_smartrandom.py), and several others. If you need to use the `numpy` random module, initialize it with a seed taken from this instance like this:
-    ```python
-    np.random.seed(bot.random.randint(0, 2**32-1))
-    ```
-    Note that you want to do it only **once** per game!
-
-- **`bot.error_count`** is a count of the timeouts your team has collected. Remember that if you timeout 5 times you lose the game, independent of the score. A timeout occurs if your `move` function takes longer than 3 seconds to return
-
-- **`bot.say(text)`** allows you to print `text` as a sort of speech bubble attached to your bot in the graphical user interface.
-
-- **`bot.kills`** is the number of enemy bots your bots has killed until now.
-
-- **`bot.deaths`** is the number of times your bot has been killed until now.
-
-- **`bot.char`** is the character representing the bot: `a`, `b`, `x` or `y`.
-
-- **`bot.team_time`** is the total accumulated time that your team has needed so far. This corresponds to the time shown in the graphical interface. Please note that the time does not increase during the execution of your bot’s code; it is only updated once at the beginning of a step.
-
-- **`bot.enemy`** is a list containing the references to the two enemy bots, which are also `Bot` objects, so they have all the properties we have just seen above. So, for example the position of the first enemy bot:
-    ```python
-    bot.enemy[0].position
-    ```
-    This position may be not exact (see below the `has_exact_position` property).
-
-- **`bot.enemy[0].food`** is the list of coordinates of the food pellets you want to eat.
-
-- **`bot.enemy[0].team_name`** you can also inspect the enemy team name with `bot.enemy[0].team_name`.
-
-- **`bot.enemy[0].team_time`** you can also inspect the accumulated time that the enemy has used so far.
-
-- **`bot.enemy[0].has_exact_position`**  <a id="has-exact-position"></a> your bot has a sight-radius of 5 squares. When an enemy bot is close enough, i.e. when the enemy bot is located within the sight radius of your bot, the `bot.enemy[0].has_exact_position` attribute will be `True` and `bot.enemy[0].position` will be the exact position of the enemy bot. If instead the enemy bot is further away, `bot.enemy[0].has_exact_position` will be `False` and `bot.enemy[0].position` will be only an approximation of the real position of the enemy bot. In this case the real position of the enemy bot could be anywhere within 5 squares of `bot.enemy[0].position`.
+If instead the enemy bot is further away, `bot.enemy[0].has_exact_position`/`bot.enemy[0].has_exact_position` will be `False` and `bot.enemy[0].position`/`bot.enemy[1].position` will be only an approximation of the real position of the enemy bot. In this case the real position of the enemy bot could be anywhere within 5 squares of `bot.enemy[0].position`/`bot.enemy[1].position`.
 
   This is better explained by the looking at the picture below. Let's assume your bot is the red bot `y` and it is `y`'s turn to move. The sight-radius for `y` is the red area:
   - `y` will "see" the exact position of enemy bot `b`, because `b` is close to `y`: `bot.enemy[1].has_exact_position==True` and `bot.enemy[1].position` will be exact.
@@ -398,17 +411,19 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
 
   An example of using the `has_exact_position` property is given in [demo05_basic_hunter.py](demo05_basic_hunter.py).
 
-    ![](pelita_GUI_debug.png)
+![](pelita_GUI_debug.png)
 
-### Running multiple games in the background
+Running multiple games in the background
+========================================
 You may want to run multiple games in the background to gather statistics about your implementation,
 or to fit some parameters of your implementation. The script [demo08_background_games.py](demo08_background_games.py) is an example of this. You can run it like this:
 ```bash
 python demo08_background_games.py
 ```
 
-## Debug using the GUI
-When you push the `debug` button in the GUI you'll see a lot more info. You can see:
+Debug using the GUI
+===================
+When you start the game using the `--debug` switch, i.e. by doing `pelita --debug bot1.py bot2.py`, or when you push the `debug` button in the GUI you'll see a lot more info. You can see:
 
 - the grid  of squares in the maze
 - the move that the current bot has just made is denoted by an highlighted square with an arrow
