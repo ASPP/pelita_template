@@ -330,7 +330,7 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
 
   - **`bot.enemy[0].team_time`**: the accumulated time that the enemy has used so far.
 
-- **`bot.error_count`**: count of the timeouts your team has collected. Remember that if you timeout 5 times you lose the game, independent of the score. A timeout occurs if your `move` function takes longer than 3 seconds to return
+- **`bot.timeouts`**: count of the timeouts your team has collected. Remember that if you timeout 5 times you lose the game, independent of the score. A timeout occurs if your `move` function takes longer than 3 seconds to return
 
 - **`bot.food`**: the list of the coordinates of the food pellets in your own homezone
     ```python
