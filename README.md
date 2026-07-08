@@ -42,7 +42,7 @@ The rules:
 
 - **food relocation**: a ghost casts a shadow of **2** square around itself. Food pellets that stay in the shadow of a ghost for more than 15 rounds without interruption are moved to a different location at random (more details [below](#shaded-food)).
 
-- **timeouts**: each bot has **3** seconds to return a valid move. If it doesn't return in time a random legal move is executed. At the 5th timeout the team is disqualified and the game is over. 
+- **timeout**: each bot has **3** seconds to return a valid move. If it doesn't return in time the team is disqualified and the game is over. 
 
 - **illegal moves**: if a bot returns an illegal move, the team is immediately disqualified and the game is over.
 
@@ -141,7 +141,7 @@ You can pass several options to the `pelita` command to help you with testing.
 
 - **`--progress`** similar to `--null` but showing the progress of the running game.
 
-- **`--no-timeout`** you can pass the option `--no-timeout` to disable the timeout detection. Usually, if a bot takes longer than 3 seconds to respond it is considered an error. Disabling it is useful for example if you want to run a debugger on your bot, like in [demo07_debugger.py](demo07_debugger.py)
+- **`--no-timeout`** you can pass the option `--no-timeout` to disable the timeout detection. Otherwise the game is over if the `move` function takes longer than 3 seconds to return. Disabling it is useful for example if you want to run a debugger on your bot, like in [demo07_debugger.py](demo07_debugger.py)
 
 - **`--help`** the full list of supported options can be obtained by passing `--help`.
 
@@ -209,7 +209,7 @@ You may also want to specify very simple layouts to test some basic features of 
 By inserting `print(bot)` within your `move` function, you can print the layout string corresponding to the current layout, together with other useful information. An example:
 ```
 Basic Gatherer Bots (you) vs Basic Hunter Bots.
-Playing on blue side. Current turn: 1. Bot: b. Round: 79, score: 11:15. timeouts: 0:0
+Playing on blue side. Current turn: 1. Bot: b. Round: 79, score: 11:15.
 ################################
 #     .  .   .      #    #     #
 #  ##### ####  ##.  # .# # ### #
@@ -266,7 +266,7 @@ Save this into a file `test_test.py`. When you run this test with `python -m pyt
 ...
 
 test_test.py blue (you) vs red.
-Playing on blue side. Current turn: 0. Bot: a. Round: None, score: 0:0. timeouts: 0:0
+Playing on blue side. Current turn: 0. Bot: a. Round: None, score: 0:0.
 ########
 #a # . #
 #b.  xy#
@@ -329,8 +329,6 @@ Note that the `Bot` object is read-only, i.e. any modifications you make to that
   - **`bot.enemy[0].team_name`**: the enemy team name
 
   - **`bot.enemy[0].team_time`**: the accumulated time that the enemy has used so far.
-
-- **`bot.timeouts`**: count of the timeouts your team has collected. Remember that if you timeout 5 times you lose the game, independent of the score. A timeout occurs if your `move` function takes longer than 3 seconds to return
 
 - **`bot.food`**: the list of the coordinates of the food pellets in your own homezone
     ```python
